@@ -1,0 +1,4 @@
+*.o
+mlp
+compile_commands.json
+build
