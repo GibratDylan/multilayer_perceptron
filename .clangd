@@ -1,2 +1,2 @@
 CompileFlags:
-  Add: [-std=c++17, -Wall, -Wextra, -Werror, -Wconversion, -pedantic, -Wshadow, -Wcast-align, -Wunused, -Wpedantic, -Wold-style-cast, -Woverloaded-virtual, -Wsign-conversion]
+  Add: [-std=c++17, -I/home/dgibrat/Project/multilayer_perceptron/libs/eigen-3.4.0, -Wall, -Wextra, -Werror, -pedantic, -Wshadow, -Wcast-align, -Wunused, -Wpedantic, -Wold-style-cast, -Wno-error=old-style-cast, -Woverloaded-virtual]

@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 3.16)
 
 project(mlp LANGUAGES CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+SET(CMAKE_C_COMPILER "/usr/bin/clang")
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
@@ -12,6 +15,11 @@ endif()
 
 add_executable(${PROJECT_NAME}
 	srcs/main.cpp
+	srcs/Layer.cpp
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+	${CMAKE_SOURCE_DIR}/libs/eigen-3.4.0
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
