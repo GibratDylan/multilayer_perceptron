@@ -1,18 +1,31 @@
 #include "../includes/Layer.hpp"
 
-#include <Eigen/Dense>
-#include <iostream>
+#include <ostream>
 
-Layer::Layer(int nb_inputs, int nb_neurons)
-	: _weights(nb_inputs, nb_neurons), _biases(nb_neurons) {
-	_weights = Eigen::MatrixXd::Random(nb_inputs, nb_neurons);
+#include <Eigen/Dense>
+
+// Do i really need constructor ?
+Layer::Layer(int size_inputs, int nb_neurons)
+	: _weights(nb_neurons, size_inputs), _biases(nb_neurons) {
+	_weights = Eigen::MatrixXd::Random(nb_neurons, size_inputs);
 	_weights *= 0.10;
 	_biases.setZero();
 }
 
-void Layer::forward(const Eigen::VectorXd& inputs) {
-	_outputs = _weights.transpose() * inputs;
-	_outputs += _biases;
+void Layer::forward(const Eigen::MatrixXd& inputs) {
+	assert(inputs.rows() == _weights.cols());
+
+	_outputs = _weights * inputs;
+
+	assert(_outputs.rows() == _biases.rows());
+	_outputs.colwise() += _biases;
+
+	assert(inputs.cols() == _outputs.cols() &&
+		   _weights.rows() == _outputs.rows());
+}
+
+const Eigen::MatrixXd& Layer::getOutputs() const {
+	return _outputs;
 }
 
 std::ostream& operator<<(std::ostream& os, const Layer& rhs) {
@@ -20,8 +33,8 @@ std::ostream& operator<<(std::ostream& os, const Layer& rhs) {
 	const Eigen::IOFormat vec_fmt(4, 0, ", ", "\n", "    [", "]");
 
 	os << "Layer\n";
-	os << "  features: " << rhs._weights.rows() << "\n";
-	os << "  neurons:  " << rhs._weights.cols() << "\n";
+	os << "  features: " << rhs._weights.cols() << "\n";
+	os << "  neurons:  " << rhs._weights.rows() << "\n";
 	os << "  weights:\n" << rhs._weights.format(mat_fmt) << "\n";
 	os << "  biases:\n" << rhs._biases.transpose().format(vec_fmt);
 

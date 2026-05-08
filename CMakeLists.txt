@@ -16,6 +16,9 @@ endif()
 add_executable(${PROJECT_NAME}
 	srcs/main.cpp
 	srcs/Layer.cpp
+	srcs/activation_fonction/AActivation.cpp
+	srcs/activation_fonction/ActivationReLU.cpp
+	srcs/activation_fonction/ActivationSoftmax.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -28,7 +31,6 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 	-Werror
 )
 
-# Equivalent to: make run
 add_custom_target(run
 	COMMAND $<TARGET_FILE:${PROJECT_NAME}>
 	DEPENDS ${PROJECT_NAME}
@@ -36,57 +38,25 @@ add_custom_target(run
 	COMMENT "Building and running ${PROJECT_NAME}"
 )
 
-# Equivalent to: make test-all (only if present)
-if(EXISTS "${CMAKE_SOURCE_DIR}/tests/run_all.sh")
-	add_custom_target(test-all
-		COMMAND bash ${CMAKE_SOURCE_DIR}/tests/run_all.sh
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-		DEPENDS ${PROJECT_NAME}
-		COMMENT "Running all tests"
-	)
-endif()
+add_custom_target(tidy-all
+	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh --all
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	COMMENT "Checking lint error with clang-tidy"
+)
+add_custom_target(tidy-fix-all
+	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh --all --fix
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	COMMENT "Fixing all C++ files with with clang-tidy"
+)
 
-# Equivalent to tidy targets (only if script exists)
-if(EXISTS "${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh")
-	add_custom_target(tidy-db
-		COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh --build-db
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	)
-	add_custom_target(tidy
-		COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh --auto-build-db --changed
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	)
-	add_custom_target(tidy-all
-		COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh --auto-build-db --all
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	)
-	add_custom_target(tidy-fix
-		COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh --auto-build-db --changed --fix
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	)
-	add_custom_target(tidy-fix-all
-		COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh --auto-build-db --all --fix
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	)
-endif()
+add_custom_target(format-all
+	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_format.sh --all
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	COMMENT "Checking formatting with clang-format"
+)
 
-# Equivalent to format targets (if clang-format is available)
-find_program(CLANG_FORMAT_EXE NAMES clang-format)
-if(CLANG_FORMAT_EXE)
-	file(GLOB_RECURSE CPP_FILES
-		"${CMAKE_SOURCE_DIR}/*.cpp"
-		"${CMAKE_SOURCE_DIR}/*.hpp"
-	)
-
-	add_custom_target(format-all
-		COMMAND ${CLANG_FORMAT_EXE} --dry-run -Werror ${CPP_FILES}
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-		COMMENT "Checking formatting with clang-format"
-	)
-
-	add_custom_target(format-fix-all
-		COMMAND ${CLANG_FORMAT_EXE} -i ${CPP_FILES}
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-		COMMENT "Formatting all C++ files with clang-format"
-	)
-endif()
+add_custom_target(format-fix-all
+	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_format.sh --all --fix
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	COMMENT "Formatting all C++ files with clang-format"
+)

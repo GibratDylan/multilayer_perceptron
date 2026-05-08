@@ -1,16 +1,20 @@
 #pragma once
 
-#include <Eigen/Dense>
 #include <ostream>
+
+#include <Eigen/Dense>
 
 class Layer {
    private:
 	Eigen::MatrixXd _weights;
 	Eigen::VectorXd _biases;
-	Eigen::VectorXd _outputs;
+	Eigen::MatrixXd _outputs;
 
    public:
-	Layer(int nb_inputs, int nb_neurons);
-	void forward(const Eigen::VectorXd& inputs);
+	Layer(int size_inputs, int nb_neurons);
+
+	void forward(const Eigen::MatrixXd& inputs);
+	const Eigen::MatrixXd& getOutputs() const;
+
 	friend std::ostream& operator<<(std::ostream& os, const Layer& rhs);
 };
