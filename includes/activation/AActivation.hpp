@@ -8,5 +8,5 @@ class AActivation {
    public:
 	virtual void forward(const Eigen::MatrixXd& inputs) = 0;
 
-	virtual const Eigen::MatrixXd& getOutputs() const;
+	const Eigen::MatrixXd& getOutputs() const;
 };

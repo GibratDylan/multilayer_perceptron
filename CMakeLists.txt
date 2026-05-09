@@ -13,15 +13,27 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
 
+set(SRCS_DIR srcs)
+set(HEADERS_DIR includes)
 add_executable(${PROJECT_NAME}
-	srcs/main.cpp
-	srcs/Layer.cpp
-	srcs/activation_fonction/AActivation.cpp
-	srcs/activation_fonction/ActivationReLU.cpp
-	srcs/activation_fonction/ActivationSoftmax.cpp
+	${SRCS_DIR}/main.cpp
+	${SRCS_DIR}/Layer.cpp
+	${SRCS_DIR}/activation/AActivation.cpp
+	${SRCS_DIR}/activation/ActivationReLU.cpp
+	${SRCS_DIR}/activation/ActivationSoftmax.cpp
+	${SRCS_DIR}/loss/ALoss.cpp
+	${SRCS_DIR}/loss/LossCategoricalCrossentropy.cpp
+
+	${HEADERS_DIR}/Layer.hpp
+	${HEADERS_DIR}/activation/AActivation.hpp
+	${HEADERS_DIR}/activation/ActivationReLU.hpp
+	${HEADERS_DIR}/activation/ActivationSoftmax.hpp
+	${HEADERS_DIR}/loss/ALoss.hpp
+	${HEADERS_DIR}/loss/LossCategoricalCrossentropy.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
+	${CMAKE_SOURCE_DIR}/${HEADERS_DIR}
 	${CMAKE_SOURCE_DIR}/libs/eigen-3.4.0
 )
 
@@ -29,6 +41,13 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 	-Wall
 	-Wextra
 	-Werror
+)
+
+add_custom_target(install-libs
+	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/check_libs.sh
+	COMMAND $<TARGET_FILE:${PROJECT_NAME}>
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	COMMENT "Checking libs"
 )
 
 add_custom_target(run
@@ -46,7 +65,7 @@ add_custom_target(tidy-all
 add_custom_target(tidy-fix-all
 	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh --all --fix
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	COMMENT "Fixing all C++ files with with clang-tidy"
+	COMMENT "Fixing all files with with clang-tidy"
 )
 
 add_custom_target(format-all
@@ -58,5 +77,5 @@ add_custom_target(format-all
 add_custom_target(format-fix-all
 	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_format.sh --all --fix
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	COMMENT "Formatting all C++ files with clang-format"
+	COMMENT "Formatting all files with clang-format"
 )

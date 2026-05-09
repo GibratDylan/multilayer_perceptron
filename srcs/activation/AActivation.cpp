@@ -1,4 +1,4 @@
-#include "../../includes/activation_fonction/AActivation.hpp"
+#include "../../includes/activation/AActivation.hpp"
 
 #include <Eigen/Dense>
 
