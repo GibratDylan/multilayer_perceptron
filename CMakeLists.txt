@@ -13,8 +13,8 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
 
-set(SRCS_DIR srcs)
-set(HEADERS_DIR includes)
+set(SRCS_DIR src)
+set(HEADERS_DIR include)
 add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/main.cpp
 	${SRCS_DIR}/Layer.cpp
@@ -22,14 +22,21 @@ add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/activation/ActivationReLU.cpp
 	${SRCS_DIR}/activation/ActivationSoftmax.cpp
 	${SRCS_DIR}/loss/ALoss.cpp
-	${SRCS_DIR}/loss/LossCategoricalCrossentropy.cpp
+	${SRCS_DIR}/loss/LossCategoricalCrossEntropy.cpp
+	${SRCS_DIR}/trainer/Trainer.cpp
+	${SRCS_DIR}/trainer/Metrics.cpp
+	#[[${SRCS_DIR}/trainer/observer/TrainerObserverMetricsWriter.cpp]]
 
 	${HEADERS_DIR}/Layer.hpp
 	${HEADERS_DIR}/activation/AActivation.hpp
 	${HEADERS_DIR}/activation/ActivationReLU.hpp
 	${HEADERS_DIR}/activation/ActivationSoftmax.hpp
 	${HEADERS_DIR}/loss/ALoss.hpp
-	${HEADERS_DIR}/loss/LossCategoricalCrossentropy.hpp
+	${HEADERS_DIR}/loss/LossCategoricalCrossEntropy.hpp
+	${HEADERS_DIR}/trainer/Trainer.hpp
+	${HEADERS_DIR}/trainer/Metrics.hpp
+	#[[${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsWriter.hpp
+	${HEADERS_DIR}/trainer/observer/ITrainerObserver.hpp]]
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
