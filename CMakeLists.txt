@@ -65,24 +65,24 @@ add_custom_target(run
 )
 
 add_custom_target(tidy-all
-	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh --all
+	COMMAND bash ${CMAKE_SOURCE_DIR}/tool/clang_tidy.sh --all
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	COMMENT "Checking lint error with clang-tidy"
 )
 add_custom_target(tidy-fix-all
-	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_tidy.sh --all --fix
+	COMMAND bash ${CMAKE_SOURCE_DIR}/tool/clang_tidy.sh --all --fix
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	COMMENT "Fixing all files with with clang-tidy"
 )
 
 add_custom_target(format-all
-	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_format.sh --all
+	COMMAND bash ${CMAKE_SOURCE_DIR}/tool/clang_format.sh --all
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	COMMENT "Checking formatting with clang-format"
 )
 
 add_custom_target(format-fix-all
-	COMMAND bash ${CMAKE_SOURCE_DIR}/tools/clang_format.sh --all --fix
+	COMMAND bash ${CMAKE_SOURCE_DIR}/tool/clang_format.sh --all --fix
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	COMMENT "Formatting all files with clang-format"
 )

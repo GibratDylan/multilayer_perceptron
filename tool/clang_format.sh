@@ -11,8 +11,8 @@ Usage:
 Runs clang-format using the repo's .clang-format config.
 
 Options:
-  --all              Run on all project sources (srcs/**/*.cpp, includes/**/*.hpp).
-  --changed          Run on modified files (git diff) limited to srcs/includes.
+  --all              Run on all project sources (src/**/*.cpp, include/**/*.hpp).
+  --changed          Run on modified files (git diff) limited to src/include.
   --fix              Apply formatting changes in-place (-i).
   --no-werror        Do not treat formatting differences as errors (check mode).
   -h, --help         Show help.
@@ -21,7 +21,7 @@ Examples:
   ./tools/clang_format.sh --changed
   ./tools/clang_format.sh --changed --fix
   ./tools/clang_format.sh --all
-  ./tools/clang_format.sh srcs/main.cpp includes/Layer.hpp
+  ./tools/clang_format.sh src/main.cpp include/Layer.hpp
 EOF
 }
 
@@ -30,7 +30,7 @@ need_cmd() {
 }
 
 collect_all_files() {
-  (cd "$ROOT_DIR" && find srcs includes \
+  (cd "$ROOT_DIR" && find src include -not -path "*/Eigen/*"\
     -type f \( -name '*.cpp' -o -name '*.hpp' -o -name '*.h' \) \
     -print)
 }
@@ -42,7 +42,7 @@ collect_changed_files() {
   fi
 
   (cd "$ROOT_DIR" && git diff --name-only --diff-filter=ACMR | \
-    grep -E '^(srcs|includes)/.*\.(cpp|hpp|h)$' || true)
+    grep -E '^(src|include)/.*\.(cpp|hpp|h)$' || true)
 }
 
 MODE=""
@@ -101,7 +101,7 @@ else
     changed)
       mapfile -t rels < <(collect_changed_files)
       if [[ ${#rels[@]} -eq 0 ]]; then
-        echo "[clang-format] No changed srcs/includes .cpp/.hpp/.h files" >&2
+        echo "[clang-format] No changed src/include .cpp/.hpp/.h files" >&2
         exit 0
       fi
       for r in "${rels[@]}"; do

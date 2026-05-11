@@ -12,8 +12,8 @@ Runs clang-tidy using the repo's .clang-tidy config.
 Requires a compilation database (build/compile_commands.json).
 
 Options:
-  --all              Run on all project sources (srcs/**/*.cpp, includes/**/*.hpp).
-  --changed          Run on modified files (git diff) limited to srcs/includes.
+  --all              Run on all project sources (src/**/*.cpp, include/**/*.hpp).
+  --changed          Run on modified files (git diff) limited to src/include.
   --fix              Apply clang-tidy fixes (--fix --fix-errors).
   --no-werror         Do not treat warnings as errors.
   --jobs N           Parallelism hint (passed to clang-tidy via -j N when supported).
@@ -23,7 +23,7 @@ Examples:
   ./tools/clang_tidy.sh --changed
   ./tools/clang_tidy.sh --changed --fix
   ./tools/clang_tidy.sh --all
-  ./tools/clang_tidy.sh srcs/main.cpp includes/Layer.hpp
+  ./tools/clang_tidy.sh src/main.cpp include/Layer.hpp
 EOF
 }
 
@@ -48,7 +48,7 @@ ensure_compdb() {
 }
 
 collect_all_files() {
-  (cd "$ROOT_DIR" && find srcs includes \
+  (cd "$ROOT_DIR" && find src include -not -path "*/Eigen/*"\
     -type f \( -name '*.cpp' -o -name '*.hpp' -o -name '*.h' \) \
     -print)
 }
@@ -60,7 +60,7 @@ collect_changed_files() {
   fi
 
   (cd "$ROOT_DIR" && git diff --name-only --diff-filter=ACMR | \
-    grep -E '^(srcs|includes)/.*\.(cpp|hpp|h)$' || true)
+    grep -E '^(src|include)/.*\.(cpp|hpp|h)$' || true)
 }
 
 JOBS=""
@@ -126,7 +126,7 @@ else
     changed)
       mapfile -t rels < <(collect_changed_files)
       if [[ ${#rels[@]} -eq 0 ]]; then
-        echo "[clang-tidy] No changed srcs/includes .cpp/.hpp/.h files" >&2
+        echo "[clang-tidy] No changed src/include .cpp/.hpp/.h files" >&2
         exit 0
       fi
       for r in "${rels[@]}"; do
@@ -146,12 +146,8 @@ else
   esac
 fi
 
-ROOT_ESCAPED="$(escape_regex "$ROOT_DIR")"
-HEADER_FILTER="^${ROOT_ESCAPED}/(srcs|includes)/"
-
 TIDY_ARGS=(
   "-p" "$ROOT_DIR/build"
-  "--header-filter=${HEADER_FILTER}"
 )
 
 if [[ "$DO_WERROR" == "1" ]]; then
