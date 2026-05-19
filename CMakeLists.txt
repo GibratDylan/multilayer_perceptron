@@ -25,7 +25,7 @@ add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/loss/LossCategoricalCrossEntropy.cpp
 	${SRCS_DIR}/trainer/Trainer.cpp
 	${SRCS_DIR}/trainer/Metrics.cpp
-	#[[${SRCS_DIR}/trainer/observer/TrainerObserverMetricsWriter.cpp]]
+	${SRCS_DIR}/trainer/observer/TrainerObserverMetricsWriter.cpp
 
 	${HEADERS_DIR}/Layer.hpp
 	${HEADERS_DIR}/activation/AActivation.hpp
@@ -35,8 +35,8 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/loss/LossCategoricalCrossEntropy.hpp
 	${HEADERS_DIR}/trainer/Trainer.hpp
 	${HEADERS_DIR}/trainer/Metrics.hpp
-	#[[${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsWriter.hpp
-	${HEADERS_DIR}/trainer/observer/ITrainerObserver.hpp]]
+	${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsWriter.hpp
+	${HEADERS_DIR}/trainer/observer/ITrainerObserver.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

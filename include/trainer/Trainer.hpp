@@ -6,8 +6,8 @@
 
 class Trainer {
    private:
-	std::vector<ITrainerObserver*> _observer;
+	std::vector<const ITrainerObserver*> _observer;
 
    public:
-	void add_observer();
+	void add_observer(const ITrainerObserver* observer);
 };

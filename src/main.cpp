@@ -3,6 +3,7 @@
 #include "activation/ActivationSoftmax.hpp"
 #include "loss/LossCategoricalCrossEntropy.hpp"
 #include "trainer/Metrics.hpp"
+#include "trainer/observer/TrainerObserverMetricsWriter.hpp"
 
 #include <iostream>
 
@@ -38,6 +39,9 @@ int main() {
 
 	std::cout << Metrics::accuracy(activation2.getOutputs(), y) << '\n';
 
+	TrainerObserverMetricsWriter metricswriter;
+	metricswriter.on_epoch_end(0, Metrics::accuracy(activation2.getOutputs(), y));
+	
 	return 0;
 }
 
