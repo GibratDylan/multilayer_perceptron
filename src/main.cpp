@@ -2,6 +2,7 @@
 #include "activation/ActivationReLU.hpp"
 #include "activation/ActivationSoftmax.hpp"
 #include "loss/LossCategoricalCrossEntropy.hpp"
+#include "activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.hpp"
 #include "trainer/Metrics.hpp"
 #include "trainer/observer/TrainerObserverMetricsWriter.hpp"
 
@@ -32,15 +33,17 @@ int main() {
 	y << 1, 0, 1, 1, 1;
 
 	std::cout << activation2.getOutputs() << '\n';
-	LossCategoricalCrossEntropy cross{};
+	ActivationSoftmaxLossCategoricalCrossentropy cross{};
 	// cross.calculate(X, y);
 
-	// std::cout << cross.calculate(activation2.getOutputs(), y) << '\n';
-
+	std::cout << cross.forward(activation2.getOutputs(), y) << '\n';
 	std::cout << Metrics::accuracy(activation2.getOutputs(), y) << '\n';
+	cross.backward( y);
+	std::cout << cross.getInputsGradient() << '\n';
 
-	TrainerObserverMetricsWriter metricswriter;
-	metricswriter.on_epoch_end(0, Metrics::accuracy(activation2.getOutputs(), y));
+
+	// TrainerObserverMetricsWriter metricswriter;
+	// metricswriter.on_epoch_end(0, Metrics::accuracy(activation2.getOutputs(), y));
 	
 	return 0;
 }

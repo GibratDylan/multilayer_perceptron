@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/activation/ActivationSoftmax.cpp
 	${SRCS_DIR}/loss/ALoss.cpp
 	${SRCS_DIR}/loss/LossCategoricalCrossEntropy.cpp
+	${SRCS_DIR}/activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.cpp
 	${SRCS_DIR}/trainer/Trainer.cpp
 	${SRCS_DIR}/trainer/Metrics.cpp
 	${SRCS_DIR}/trainer/observer/TrainerObserverMetricsWriter.cpp
@@ -33,6 +34,7 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/activation/ActivationSoftmax.hpp
 	${HEADERS_DIR}/loss/ALoss.hpp
 	${HEADERS_DIR}/loss/LossCategoricalCrossEntropy.hpp
+	${HEADERS_DIR}/activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.hpp
 	${HEADERS_DIR}/trainer/Trainer.hpp
 	${HEADERS_DIR}/trainer/Metrics.hpp
 	${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsWriter.hpp
