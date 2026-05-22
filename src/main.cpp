@@ -1,8 +1,8 @@
 #include "Layer.hpp"
 #include "activation/ActivationReLU.hpp"
 #include "activation/ActivationSoftmax.hpp"
-#include "loss/LossCategoricalCrossEntropy.hpp"
 #include "activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.hpp"
+#include "loss/LossCategoricalCrossEntropy.hpp"
 #include "trainer/Metrics.hpp"
 #include "trainer/observer/TrainerObserverMetricsWriter.hpp"
 
@@ -11,40 +11,49 @@
 #include <Eigen/Dense>
 
 int main() {
-	/// x = rows(input), y = cols(batch)
-	Eigen::MatrixXd X(2, 5);
-	X << 1., 2., -1.5, 1., 2., 4., -2, .56, .23, 1.46;
+	/// inputs = rows(input), batch = cols(batch)
+	Eigen::MatrixXd inputs(2, 5);
+	inputs << 1., 2., -1.5, 1., 2., 4., -2, .56, .23, 1.46;
 
-	Layer dense1{2, 10};
-	ActivationReLU activation1{};
-	Layer dense2{10, 2};
-	ActivationSoftmax activation2{};
-	dense1.forward(X);
-	activation1.forward(dense1.getOutputs());
-	dense2.forward(activation1.getOutputs());
-	activation2.forward(dense2.getOutputs());
+	Layer dense_1{2, 10};
+	ActivationReLU activation_1{};
+	Layer dense_2{10, 2};
+	// ActivationSoftmax activation_2{};
+	dense_1.forward(inputs);
+	activation_1.forward(dense_1.getOutputs());
 
-	/// x = rows(input), y = cols(batch)
-	// Eigen::MatrixXd X(2, 5);
-	// X << 1., 2., -1.5, 1., 2., 4., -2, .56, .23, 1.46;
+	dense_2.forward(activation_1.getOutputs());
+	std::cout << dense_2 << '\n';
+	// activation_2.forward(dense_2.getOutputs());
 
-	/// target x = rows(batch)
-	Eigen::VectorXi y(5);
-	y << 1, 0, 1, 1, 1;
+	/// inputs = rows(input), batch = cols(batch)
+	// Eigen::MatrixXd inputs(2, 5);
+	// inputs << 1., 2., -1.5, 1., 2., 4., -2, .56, .23, 1.46;
 
-	std::cout << activation2.getOutputs() << '\n';
-	ActivationSoftmaxLossCategoricalCrossentropy cross{};
-	// cross.calculate(X, y);
+	/// targets = rows(batch)
+	Eigen::VectorXi targets(5);
+	targets << 1, 0, 1, 1, 1;
 
-	std::cout << cross.forward(activation2.getOutputs(), y) << '\n';
-	std::cout << Metrics::accuracy(activation2.getOutputs(), y) << '\n';
-	cross.backward( y);
-	std::cout << cross.getInputsGradient() << '\n';
+	// std::cout << activation_2.getOutputs() << '\n';
+	ActivationSoftmaxLossCategoricalCrossentropy softmax_loss{};
+	// softmax_loss.calculate(inputs, targets);
 
+	std::cout << "Loss mean: "
+			  << softmax_loss.forward(dense_2.getOutputs(), targets) << '\n';
+	std::cout << "Accuracy: "
+			  << Metrics::accuracy(softmax_loss.getOutputs(), targets) << '\n';
+	std::cout << softmax_loss << '\n';
 
-	// TrainerObserverMetricsWriter metricswriter;
-	// metricswriter.on_epoch_end(0, Metrics::accuracy(activation2.getOutputs(), y));
-	
+	softmax_loss.backward(targets);
+	std::cout << softmax_loss << '\n';
+
+	dense_2.backward(softmax_loss.getInputsGradient());
+	std::cout << dense_2 << '\n';
+
+	// TrainerObserverMetricsWriter metrics_writer;
+	// metrics_writer.on_epoch_end(0,
+	// Metrics::accuracy(activation2.getOutputs(), targets));
+
 	return 0;
 }
 

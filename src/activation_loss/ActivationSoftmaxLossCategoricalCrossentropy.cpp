@@ -1,39 +1,56 @@
 #include "activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.hpp"
 
+#include <ostream>
+
 #include <Eigen/Dense>
 
 double ActivationSoftmaxLossCategoricalCrossentropy::forward(
 	const Eigen::MatrixXd& inputs, const Eigen::VectorXi& target_inputs) {
-	_activation.forward(inputs);
-	_outputs = _activation.getOutputs();
+	activation_.forward(inputs);
+	outputs_ = activation_.getOutputs();
 
-	return _loss.calculate(_outputs, target_inputs);
+	return loss_.calculate(outputs_, target_inputs);
 }
 
-void ActivationSoftmaxLossCategoricalCrossentropy::backward(const Eigen::VectorXi& target_inputs) {
-    _inputGradient = _outputs;
+void ActivationSoftmaxLossCategoricalCrossentropy::backward(
+	const Eigen::VectorXi& target_inputs) {
+	inputs_gradient_ = outputs_;
 
-    const Eigen::Index samples = target_inputs.size();
+	const Eigen::Index samples = target_inputs.size();
 
-	assert(_inputGradient.cols() == target_inputs.rows() &&
-		   target_inputs.maxCoeff() <= _inputGradient.rows());
+	assert(inputs_gradient_.cols() == target_inputs.rows() &&
+		   target_inputs.maxCoeff() <= inputs_gradient_.rows());
 
-	assert(_inputGradient.size() > 0 && target_inputs.size() > 0);
+	assert(inputs_gradient_.size() > 0 && target_inputs.size() > 0);
 
-    for (Eigen::Index index = 0; index < samples; ++index) {
-        _inputGradient(target_inputs(index), index) -= 1.0;
-    }
+	for (Eigen::Index index = 0; index < samples; ++index) {
+		inputs_gradient_(target_inputs(index), index) -= 1.0;
+	}
 
-	_inputGradient /= static_cast<double>(samples);
+	inputs_gradient_ /= static_cast<double>(samples);
 }
 
 const Eigen::MatrixXd&
 ActivationSoftmaxLossCategoricalCrossentropy::getOutputs() const {
-	return _outputs;
+	return outputs_;
 }
 
 const Eigen::MatrixXd&
 ActivationSoftmaxLossCategoricalCrossentropy::getInputsGradient() const {
-	return _inputGradient;
+	return inputs_gradient_;
 }
 
+std::ostream& operator<<(
+	std::ostream& os, const ActivationSoftmaxLossCategoricalCrossentropy& rhs) {
+	const Eigen::IOFormat mat_fmt(4, 0, ", ", "\n", "    [", "]");
+	const Eigen::IOFormat vec_fmt(4, 0, ", ", "\n", "    [", "]");
+
+	os << "ActivationSoftmaxLossCategoricalCrossentropy\n";
+	os << "  outputs:\n" << rhs.outputs_.format(mat_fmt) << "\n";
+	os << "  inputs_gradient:\n"
+	   << rhs.inputs_gradient_.format(mat_fmt) << "\n";
+	os << "  loss_outputs:\n"
+	   << rhs.loss_.getOutputs().transpose().format(vec_fmt);
+
+	return os;
+}

@@ -1,10 +1,12 @@
 #pragma once
 
+#include <ostream>
+
 #include <Eigen/Dense>
 
 class ALoss {
    protected:
-	Eigen::VectorXd _outputs;
+	Eigen::VectorXd outputs_;
 	virtual void forward(const Eigen::MatrixXd& predictive_inputs,
 						 const Eigen::VectorXi& target_inputs) = 0;
 
@@ -15,3 +17,5 @@ class ALoss {
 
 	const Eigen::VectorXd& getOutputs() const;
 };
+
+std::ostream& operator<<(std::ostream& os, const ALoss& rhs);

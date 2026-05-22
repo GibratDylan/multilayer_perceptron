@@ -6,15 +6,22 @@
 
 class Layer {
    private:
-	Eigen::MatrixXd _weights;
-	Eigen::VectorXd _biases;
-	Eigen::MatrixXd _outputs;
+	Eigen::MatrixXd weights_;
+	Eigen::VectorXd biases_;
+	Eigen::MatrixXd outputs_;
+	Eigen::MatrixXd inputs_;
+
+	Eigen::MatrixXd weights_gradient_;
+	Eigen::VectorXd biases_gradient_;
+	Eigen::MatrixXd inputs_gradient_;
 
    public:
-	Layer(int size_inputs, int nb_neurons);
+	Layer(int input_size, int num_neurons);
 
 	void forward(const Eigen::MatrixXd& inputs);
+	void backward(const Eigen::MatrixXd& inputs);
 	const Eigen::MatrixXd& getOutputs() const;
+	const Eigen::MatrixXd& getInputsGradient() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const Layer& rhs);
 };

@@ -5,6 +5,7 @@
 #include <vector>
 
 void Trainer::add_observer(const ITrainerObserver* observer) {
-    assert(observer != nullptr);
-    _observer.push_back(observer);
+	assert(observer != nullptr);
+
+	observers_.push_back(observer);
 }
