@@ -2,6 +2,18 @@ cmake_minimum_required(VERSION 3.16)
 
 project(mlp LANGUAGES CXX)
 
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/include/Eigen/Core")
+	message(STATUS "Downloading and extracting Eigen 3.4.0...")
+	execute_process(
+		COMMAND bash ${CMAKE_SOURCE_DIR}/tool/download_eigen.sh
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+		RESULT_VARIABLE EIGEN_DOWNLOAD_RESULT
+	)
+	if(NOT EIGEN_DOWNLOAD_RESULT EQUAL 0)
+		message(FATAL_ERROR "Failed to download Eigen")
+	endif()
+endif()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -43,7 +55,6 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PRIVATE
 	${CMAKE_SOURCE_DIR}/${HEADERS_DIR}
-	${CMAKE_SOURCE_DIR}/libs/eigen-3.4.0
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
@@ -71,6 +82,7 @@ add_custom_target(tidy-all
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	COMMENT "Checking lint error with clang-tidy"
 )
+
 add_custom_target(tidy-fix-all
 	COMMAND bash ${CMAKE_SOURCE_DIR}/tool/clang_tidy.sh --all --fix
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}

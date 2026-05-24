@@ -31,6 +31,10 @@ need_cmd() {
   command -v "$1" >/dev/null 2>&1
 }
 
+supports_exclude_header_filter() {
+  clang-tidy --help 2>&1 | grep -q -- '--exclude-header-filter'
+}
+
 escape_regex() {
   # Escape a string so it can be safely embedded in an ERE regex.
   # shellcheck disable=SC2001
@@ -43,6 +47,7 @@ ensure_compdb() {
   fi
 
   echo "[clang-tidy] Missing compile_commands.json" >&2
+  clang-tidy --quiet "$file" "${TIDY_ARGS[@]}" 2>&1 | filter_eigen_errors || EXIT_CODE=$?
   echo "[clang-tidy] Run: cmake --build build" >&2
   return 2
 }
@@ -60,7 +65,18 @@ collect_changed_files() {
   fi
 
   (cd "$ROOT_DIR" && git diff --name-only --diff-filter=ACMR | \
-    grep -E '^(src|include)/.*\.(cpp|hpp|h)$' || true)
+      grep -E '^(src|include)/.*\.(cpp|hpp|h)$' | \
+      grep -v '^include/Eigen/' || true)
+}
+
+filter_eigen_errors() {
+  # Filter out errors/warnings from Eigen headers
+  # Only drop diagnostics whose primary file is under include/Eigen.
+  awk 'BEGIN { keep = 1 }
+       /^[^:]+:[0-9]+:[0-9]+:/ {
+         keep = ($0 !~ /\/include\/Eigen\//) && ($0 !~ /^\/usr\/include\//) && ($0 !~ /^\/usr\/lib\/clang\//)
+       }
+       { if (keep) print }' || true
 }
 
 JOBS=""
@@ -150,6 +166,18 @@ TIDY_ARGS=(
   "-p" "$ROOT_DIR/build"
 )
 
+ROOT_DIR_ESCAPED="$(escape_regex "$ROOT_DIR")"
+if supports_exclude_header_filter; then
+  HEADER_FILTER="^${ROOT_DIR_ESCAPED}/(src|include)/"
+  EXCLUDE_HEADER_FILTER="^${ROOT_DIR_ESCAPED}/include/Eigen/"
+  TIDY_ARGS+=("--header-filter=${HEADER_FILTER}")
+  TIDY_ARGS+=("--exclude-header-filter=${EXCLUDE_HEADER_FILTER}")
+else
+  # Fallback: only check source files to avoid analyzing third-party headers.
+  HEADER_FILTER="^${ROOT_DIR_ESCAPED}/src/"
+  TIDY_ARGS+=("--header-filter=${HEADER_FILTER}")
+fi
+
 if [[ "$DO_WERROR" == "1" ]]; then
   TIDY_ARGS+=("-warnings-as-errors=*")
 fi
@@ -170,7 +198,7 @@ for file in "${FILES[@]}"; do
     echo "[clang-tidy] Skip missing: $file" >&2
     continue
   fi
-  clang-tidy --quiet "$file" "${TIDY_ARGS[@]}" || EXIT_CODE=$?
+    clang-tidy --quiet "$file" "${TIDY_ARGS[@]}" 2>&1 | filter_eigen_errors || EXIT_CODE=$?
 done
 
 exit "$EXIT_CODE"
