@@ -18,11 +18,9 @@ class ActivationSoftmaxLossCategoricalCrossentropy {
    public:
 	double forward(const Eigen::MatrixXd& inputs,
 				   const Eigen::VectorXi& target_inputs);
-
 	void backward(const Eigen::VectorXi& target_inputs);
 
 	const Eigen::MatrixXd& getOutputs() const;
-
 	const Eigen::MatrixXd& getInputsGradient() const;
 
 	friend std::ostream& operator<<(

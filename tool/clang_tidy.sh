@@ -23,7 +23,7 @@ Examples:
   ./tools/clang_tidy.sh --changed
   ./tools/clang_tidy.sh --changed --fix
   ./tools/clang_tidy.sh --all
-  ./tools/clang_tidy.sh src/main.cpp include/Layer.hpp
+  ./tools/clang_tidy.sh src/main.cpp include/NeuronalLayer.hpp
 EOF
 }
 

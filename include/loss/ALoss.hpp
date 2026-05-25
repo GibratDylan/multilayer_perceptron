@@ -7,15 +7,20 @@
 class ALoss {
    protected:
 	Eigen::VectorXd outputs_;
-	virtual void forward(const Eigen::MatrixXd& predictive_inputs,
-						 const Eigen::VectorXi& target_inputs) = 0;
+	Eigen::MatrixXd inputs_;
+
+	Eigen::MatrixXd inputs_gradient_;
 
    public:
 	virtual ~ALoss() = default;
-	double calculate(const Eigen::MatrixXd& predictive_inputs,
-					 const Eigen::VectorXi& target_inputs);
+
+	virtual void forward(const Eigen::MatrixXd& predictive_inputs,
+						 const Eigen::VectorXi& target_inputs) = 0;
+	virtual void backward(const Eigen::VectorXi& target_inputs) = 0;
 
 	const Eigen::VectorXd& getOutputs() const;
-};
+	const Eigen::MatrixXd& getInputsGradient() const;
+	double getLoss() const;
 
-std::ostream& operator<<(std::ostream& os, const ALoss& rhs);
+	friend std::ostream& operator<<(std::ostream& os, const ALoss& rhs);
+};

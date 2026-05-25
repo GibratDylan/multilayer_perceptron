@@ -1,18 +1,18 @@
-#include "Layer.hpp"
+#include "NeuronalLayer.hpp"
 
 #include <ostream>
 
 #include <Eigen/Dense>
 
 // Do i really need constructor ?
-Layer::Layer(int input_size, int num_neurons)
+NeuronalLayer::NeuronalLayer(int input_size, int num_neurons)
 	: weights_{Eigen::MatrixXd::Random(num_neurons, input_size)},
 	  biases_(num_neurons) {
 	weights_ *= 0.10;
 	biases_.setZero();
 }
 
-void Layer::forward(const Eigen::MatrixXd& inputs) {
+void NeuronalLayer::forward(const Eigen::MatrixXd& inputs) {
 	assert(inputs.rows() == weights_.cols() && inputs.size() > 0);
 
 	inputs_ = inputs;
@@ -26,21 +26,29 @@ void Layer::forward(const Eigen::MatrixXd& inputs) {
 		   weights_.rows() == outputs_.rows());
 }
 
-void Layer::backward(const Eigen::MatrixXd& inputs) {
+void NeuronalLayer::backward(const Eigen::MatrixXd& inputs) {
 	weights_gradient_ = inputs * inputs_.transpose();
 	biases_gradient_ = inputs.rowwise().sum();
 	inputs_gradient_ = weights_.transpose() * inputs;
 }
 
-const Eigen::MatrixXd& Layer::getOutputs() const {
+Eigen::Index NeuronalLayer::getInputSize() const {
+	return weights_.cols();
+}
+
+Eigen::Index NeuronalLayer::getNumNeurons() const {
+	return weights_.rows();
+}
+
+const Eigen::MatrixXd& NeuronalLayer::getOutputs() const {
 	return outputs_;
 }
 
-const Eigen::MatrixXd& Layer::getInputsGradient() const {
+const Eigen::MatrixXd& NeuronalLayer::getInputsGradient() const {
 	return inputs_gradient_;
 }
 
-std::ostream& operator<<(std::ostream& os, const Layer& rhs) {
+std::ostream& operator<<(std::ostream& os, const NeuronalLayer& rhs) {
 	const Eigen::IOFormat mat_fmt(4, 0, ", ", "\n", "    [", "]");
 	const Eigen::IOFormat vec_fmt(4, 0, ", ", "\n", "    [", "]");
 

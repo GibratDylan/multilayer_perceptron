@@ -7,9 +7,9 @@
 double ActivationSoftmaxLossCategoricalCrossentropy::forward(
 	const Eigen::MatrixXd& inputs, const Eigen::VectorXi& target_inputs) {
 	activation_.forward(inputs);
-	outputs_ = activation_.getOutputs();
+	loss_.forward(activation_.getOutputs(), target_inputs);
 
-	return loss_.calculate(outputs_, target_inputs);
+	return loss_.getLoss();
 }
 
 void ActivationSoftmaxLossCategoricalCrossentropy::backward(
@@ -51,6 +51,7 @@ std::ostream& operator<<(
 	   << rhs.inputs_gradient_.format(mat_fmt) << "\n";
 	os << "  loss_outputs:\n"
 	   << rhs.loss_.getOutputs().transpose().format(vec_fmt);
+	os << "  loss_means:\n" << rhs.loss_.getLoss();
 
 	return os;
 }

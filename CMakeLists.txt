@@ -29,7 +29,7 @@ set(SRCS_DIR src)
 set(HEADERS_DIR include)
 add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/main.cpp
-	${SRCS_DIR}/Layer.cpp
+	${SRCS_DIR}/NeuronalLayer.cpp
 	${SRCS_DIR}/activation/AActivation.cpp
 	${SRCS_DIR}/activation/ActivationReLU.cpp
 	${SRCS_DIR}/activation/ActivationSoftmax.cpp
@@ -39,8 +39,9 @@ add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/trainer/Trainer.cpp
 	${SRCS_DIR}/trainer/Metrics.cpp
 	${SRCS_DIR}/trainer/observer/TrainerObserverMetricsWriter.cpp
+	${SRCS_DIR}/network/Network.cpp
 
-	${HEADERS_DIR}/Layer.hpp
+	${HEADERS_DIR}/NeuronalLayer.hpp
 	${HEADERS_DIR}/activation/AActivation.hpp
 	${HEADERS_DIR}/activation/ActivationReLU.hpp
 	${HEADERS_DIR}/activation/ActivationSoftmax.hpp
@@ -51,6 +52,7 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/trainer/Metrics.hpp
 	${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsWriter.hpp
 	${HEADERS_DIR}/trainer/observer/ITrainerObserver.hpp
+	${HEADERS_DIR}/network/Network.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

@@ -21,7 +21,7 @@ Examples:
   ./tools/clang_format.sh --changed
   ./tools/clang_format.sh --changed --fix
   ./tools/clang_format.sh --all
-  ./tools/clang_format.sh src/main.cpp include/Layer.hpp
+  ./tools/clang_format.sh src/main.cpp include/NeuronalLayer.hpp
 EOF
 }
 

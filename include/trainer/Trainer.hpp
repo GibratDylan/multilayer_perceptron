@@ -10,4 +10,7 @@ class Trainer {
 
    public:
 	void add_observer(const ITrainerObserver* observer);
+
+	// void forwardPass();
+	// void backwardPass();
 };
