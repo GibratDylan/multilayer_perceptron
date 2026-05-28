@@ -9,4 +9,3 @@ void Trainer::add_observer(const ITrainerObserver* observer) {
 
 	observers_.push_back(observer);
 }
-

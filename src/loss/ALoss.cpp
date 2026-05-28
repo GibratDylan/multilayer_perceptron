@@ -17,6 +17,11 @@ const Eigen::MatrixXd& ALoss::getInputsGradient() const {
 	return inputs_gradient_;
 }
 
+ALoss::lossFuncType ALoss::getLossType(std::string_view str) {
+	if (str == lossFuncString::CATCROSSENTROPY) return CATCROSSENTROPY;
+	return NONE;
+}
+
 std::ostream& operator<<(std::ostream& os, const ALoss& rhs) {
 	const Eigen::IOFormat mat_fmt(4, 0, ", ", "\n", "    [", "]");
 	const Eigen::IOFormat vec_fmt(4, 0, ", ", "\n", "    [", "]");

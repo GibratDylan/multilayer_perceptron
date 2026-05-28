@@ -4,7 +4,14 @@
 
 #include <Eigen/Dense>
 
+namespace lossFuncString {
+const std::string CATCROSSENTROPY = "categorical_cross_entropy";
+};
+
 class ALoss {
+   public:
+	enum lossFuncType : uint8_t { CATCROSSENTROPY, NONE };
+
    protected:
 	Eigen::VectorXd outputs_;
 	Eigen::MatrixXd inputs_;
@@ -21,6 +28,8 @@ class ALoss {
 	const Eigen::VectorXd& getOutputs() const;
 	const Eigen::MatrixXd& getInputsGradient() const;
 	double getLoss() const;
+
+	static ALoss::lossFuncType getLossType(std::string_view str);
 
 	friend std::ostream& operator<<(std::ostream& os, const ALoss& rhs);
 };

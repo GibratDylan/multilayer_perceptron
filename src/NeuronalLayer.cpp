@@ -5,7 +5,7 @@
 #include <Eigen/Dense>
 
 // Do i really need constructor ?
-NeuronalLayer::NeuronalLayer(int input_size, int num_neurons)
+NeuronalLayer::NeuronalLayer(unsigned int input_size, unsigned int num_neurons)
 	: weights_{Eigen::MatrixXd::Random(num_neurons, input_size)},
 	  biases_(num_neurons) {
 	weights_ *= 0.10;

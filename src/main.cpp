@@ -2,28 +2,45 @@
 #include "activation/ActivationReLU.hpp"
 #include "activation/ActivationSoftmax.hpp"
 #include "activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.hpp"
+#include "config/Config.hpp"
 #include "loss/LossCategoricalCrossEntropy.hpp"
 #include "network/Network.hpp"
 #include "trainer/Metrics.hpp"
 #include "trainer/observer/TrainerObserverMetricsWriter.hpp"
 
 #include <iostream>
+#include <string>
 
 #include <Eigen/Dense>
 
-int main() {
+int main(const int argc, const char** argv) {
+	if (argc != 2) {
+		std::cerr << "Program need config file: ./mlp path/to/config.txt\n";
+		return 1;
+	}
+
+	Config config{std::string{argv[1]}};
+	if (!config.parse()) return 1;
+
 	/// inputs = rows(input), batch = cols(batch)
-	Eigen::MatrixXd inputs(2, 5);
-	inputs << 1., 2., -1.5, 1., 2., 4., -2, .56, .23, 1.46;
+	Eigen::MatrixXd inputs(config.getNeuralLayer().front(),
+						   config.getBatchSize());
+	for (unsigned int i = 0; i < inputs.rows(); ++i) {
+		for (unsigned int j = 0; j < inputs.cols(); ++j) inputs(i, j) = 0.5;
+	}
 
 	/// targets = rows(batch)
-	Eigen::VectorXi targets(5);
-	targets << 1, 0, 1, 1, 1;
+	Eigen::VectorXi targets(config.getBatchSize());
+	for (unsigned int i = 0; i < targets.rows(); ++i) targets(i) = 1;
 
 	Network network{std::make_unique<LossCategoricalCrossEntropy>()};
 
-	network.addLayer(NeuronalLayer{2, 10}, std::make_unique<ActivationReLU>());
-	network.addLayer(NeuronalLayer{10, 2},
+	for (unsigned int i = 0; i < config.getSize() - 2; ++i)
+		network.addLayer(NeuronalLayer{config.getNeuralLayer()[i],
+									   config.getNeuralLayer()[i + 1]},
+						 std::make_unique<ActivationReLU>());
+
+	network.addLayer(NeuronalLayer{64, 2},
 					 std::make_unique<ActivationSoftmax>());
 
 	std::cout << network.forwardPass(inputs, targets) << '\n';
@@ -55,7 +72,5 @@ int main() {
 	return 0;
 }
 
-// Use Eigen::matrix or Eigen::vector everywhere ?
-// _outputs in class ?
-// Install and download libs with make
-// Check Matrix and vector type
+// Eigen::MatrixXf or Eigen::MatrixXd ?
+// Optimise memory usage

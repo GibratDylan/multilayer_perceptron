@@ -16,7 +16,7 @@ class NeuronalLayer {
 	Eigen::MatrixXd inputs_gradient_;
 
    public:
-	NeuronalLayer(int input_size, int num_neurons);
+	explicit NeuronalLayer(unsigned int input_size, unsigned int num_neurons);
 	NeuronalLayer(const NeuronalLayer& other) = default;
 	NeuronalLayer& operator=(const NeuronalLayer& other) = default;
 	NeuronalLayer(NeuronalLayer&& other) = default;

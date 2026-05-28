@@ -1,0 +1,6 @@
+epochs
+learning_rate 0.01
+batch_size 32
+layer 784 128 relu
+layer 128 10 softmax
+loss categorical_cross_entropy

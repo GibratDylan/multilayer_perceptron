@@ -40,6 +40,7 @@ add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/trainer/Metrics.cpp
 	${SRCS_DIR}/trainer/observer/TrainerObserverMetricsWriter.cpp
 	${SRCS_DIR}/network/Network.cpp
+	${SRCS_DIR}/config/Config.cpp
 
 	${HEADERS_DIR}/NeuronalLayer.hpp
 	${HEADERS_DIR}/activation/AActivation.hpp
@@ -53,6 +54,7 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsWriter.hpp
 	${HEADERS_DIR}/trainer/observer/ITrainerObserver.hpp
 	${HEADERS_DIR}/network/Network.hpp
+	${HEADERS_DIR}/config/Config.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

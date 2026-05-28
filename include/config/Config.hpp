@@ -1,17 +1,21 @@
 #pragma once
 
+#include "activation/AActivation.hpp"
+#include "loss/ALoss.hpp"
+
 #include <string>
 #include <string_view>
 #include <vector>
 
 class Config {
    private:
-	std::vector<int> neuronal_layers_;
-	std::vector<std::string> activation_func_;
-	int epochs_;
-	int batch_size_;
+	unsigned int size_;
+	std::vector<unsigned int> neuronal_layers_;
+	std::vector<AActivation::activationFuncType> activation_func_;
+	unsigned int epochs_;
+	unsigned int batch_size_;
 	float learning_rate_;
-	std::string loss_func_;
+	ALoss::lossFuncType loss_func_;
 
 	std::string path_;
 
@@ -19,19 +23,18 @@ class Config {
 	Config(std::string_view path);
 
 	bool parse();
+	bool isConfigValid() const;
 
-	bool getNeuralLayer() const;
-	bool getActivationFunc() const;
-	bool getEpochs() const;
-	bool getLearningRate() const;
-	bool getLossFunc() const;
-   bool getBatchSize() const;
+	const std::vector<unsigned int>& getNeuralLayer() const;
+	const std::vector<AActivation::activationFuncType>& getActivationFunc()
+		const;
+	unsigned int getSize() const;
+	unsigned int getEpochs() const;
+	unsigned int getBatchSize() const;
+	float getLearningRate() const;
+	ALoss::lossFuncType getLossFunc() const;
 
    private:
-	static bool isNeuralLayerValid(std::string_view string);
 	static bool isActivationFuncValid(std::string_view string);
-	static bool isEpochsValid(std::string_view string);
-	static bool isLearningRateValid(std::string_view string);
 	static bool isLossFuncValid(std::string_view string);
-	static bool isBatchSizeValid(std::string_view string);
 };

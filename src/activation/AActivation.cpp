@@ -12,6 +12,13 @@ const Eigen::MatrixXd& AActivation::getInputsGradient() const {
 	return inputs_gradient_;
 }
 
+AActivation::activationFuncType AActivation::getActivationType(
+	std::string_view str) {
+	if (str == activationFuncString::RELU) return RELU;
+	if (str == activationFuncString::SOFTMAX) return SOFTMAX;
+	return NONE;
+}
+
 std::ostream& operator<<(std::ostream& os, const AActivation& rhs) {
 	const Eigen::IOFormat mat_fmt(4, 0, ", ", "\n", "    [", "]");
 

@@ -5,3 +5,4 @@ layer 784 128 relu
 layer 128 64 relu
 layer 64 10 softmax
 loss categorical_cross_entropy
+loss categorical_cross_entropy

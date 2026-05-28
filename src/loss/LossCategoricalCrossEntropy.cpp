@@ -37,7 +37,8 @@ void LossCategoricalCrossEntropy::backward(
 	inputs_gradient_.resizeLike(inputs_);
 	for (int i = 0; i < inputs_.cols(); ++i) {
 		int label = target_inputs(i);
-		double predictive_input = std::max(1e-7, std::min(1 - 1e-7, inputs_(label, i)));
+		double predictive_input =
+			std::max(1e-7, std::min(1 - 1e-7, inputs_(label, i)));
 		inputs_gradient_(label, i) = -1.0 / predictive_input;
 	}
 	inputs_gradient_ /= static_cast<double>(inputs_.cols());
