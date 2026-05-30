@@ -51,8 +51,8 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/loss/LossCategoricalCrossEntropy.hpp
 	${HEADERS_DIR}/activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.hpp
 	${HEADERS_DIR}/trainer/Trainer.hpp
-	${HEADERS_DIR}/trainer/Metrics.hpp
-	${HEADERS_DIR}/trainer/observer/TrainerObservermetricsWriter.hpp
+	${HEADERS_DIR}/trainer/metrics.hpp
+	${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsWriter.hpp
 	${HEADERS_DIR}/trainer/observer/ITrainerObserver.hpp
 	${HEADERS_DIR}/network/Network.hpp
 	${HEADERS_DIR}/config/Config.hpp

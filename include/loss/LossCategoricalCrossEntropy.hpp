@@ -2,11 +2,14 @@
 
 #include "ALoss.hpp"
 
-#include <Eigen/Dense>
-
 class LossCategoricalCrossEntropy : public ALoss {
    public:
-	void forward(const Eigen::MatrixXd& predictive_inputs,
-				 const Eigen::VectorXi& target_inputs) override;
-	void backward(const Eigen::VectorXi& target_inputs) override;
+	using LogitsBatch = ALoss::LogitsBatch;
+	using TargetsBatch = ALoss::TargetsBatch;
+	using LossesBatch = ALoss::LossesBatch;
+	using LogitsGradientBatch = ALoss::LogitsGradientBatch;
+
+	void Forward(const LogitsBatch& logits_batch,
+				 const TargetsBatch& targets_batch) override;
+	void Backward(const TargetsBatch& targets_batch) override;
 };

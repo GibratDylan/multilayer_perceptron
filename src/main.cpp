@@ -7,43 +7,41 @@
 #include "network/Network.hpp"
 #include "trainer/metrics.hpp"
 #include "trainer/observer/TrainerObserverMetricsWriter.hpp"
+#include "types/EigenTypes.hpp"
 
 #include <iostream>
 #include <string>
 
-#include <Eigen/Dense>
-
-int main(const int argc, const char** argv) {
+int main(int argc, const char** argv) {
 	if (argc != 2) {
 		std::cerr << "Program need config file: ./mlp path/to/config.txt\n";
 		return 1;
 	}
 
 	Config config{std::string{argv[1]}};
-	if (!config.parse()) return 1;
+	if (!config.Parse()) return 1;
 
 	/// inputs = rows(input), batch = cols(batch)
-	Eigen::MatrixXd inputs(config.getNeuralLayer().front(),
-						   config.getBatchSize());
-	for (unsigned int i = 0; i < inputs.rows(); ++i) {
-		for (unsigned int j = 0; j < inputs.cols(); ++j) inputs(i, j) = 0.5;
+	Matrix inputs(config.GetNeuralLayer().front(), config.GetBatchSize());
+	for (Index i = 0; i < inputs.rows(); ++i) {
+		for (Index j = 0; j < inputs.cols(); ++j) inputs(i, j) = 0.5;
 	}
 
 	/// targets = rows(batch)
-	Eigen::VectorXi targets(config.getBatchSize());
-	for (unsigned int i = 0; i < targets.rows(); ++i) targets(i) = 1;
+	IntVector targets(config.GetBatchSize());
+	for (Index i = 0; i < targets.rows(); ++i) targets(i) = 1;
 
 	Network network{std::make_unique<LossCategoricalCrossEntropy>()};
 
-	for (unsigned int i = 0; i < config.getSize() - 2; ++i)
-		network.addLayer(NeuronalLayer{config.getNeuralLayer()[i],
-									   config.getNeuralLayer()[i + 1]},
+	for (LayerIndex i = 0; i < config.GetSize() - 2; ++i)
+		network.AddLayer(NeuronalLayer{config.GetNeuralLayer()[i],
+									   config.GetNeuralLayer()[i + 1]},
 						 std::make_unique<ActivationReLU>());
 
-	network.addLayer(NeuronalLayer{64, 2},
+	network.AddLayer(NeuronalLayer{64, 2},
 					 std::make_unique<ActivationSoftmax>());
 
-	std::cout << network.forwardPass(inputs, targets) << '\n';
+	std::cout << network.ForwardPass(inputs, targets) << '\n';
 
 	// Layer dense_1{2, 10};
 	// ActivationReLU activation_1{};

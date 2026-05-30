@@ -1,20 +1,18 @@
 #include "loss/LossCategoricalCrossEntropy.hpp"
 
-#include <Eigen/Dense>
+void LossCategoricalCrossEntropy::Forward(const LogitsBatch& logits_batch,
+										  const TargetsBatch& targets_batch) {
+	assert(logits_batch.cols() == targets_batch.rows() &&
+		   targets_batch.maxCoeff() <= logits_batch.rows());
+	assert(logits_batch.size() > 0 && targets_batch.size() > 0);
 
-void LossCategoricalCrossEntropy::forward(
-	const Eigen::MatrixXd& predictive_inputs,
-	const Eigen::VectorXi& target_inputs) {
-	assert(predictive_inputs.cols() == target_inputs.rows() &&
-		   target_inputs.maxCoeff() <= predictive_inputs.rows());
-	assert(predictive_inputs.size() > 0 && target_inputs.size() > 0);
+	inputs_ = logits_batch;
 
-	inputs_ = predictive_inputs;
-
-	Eigen::VectorXd correct_confidences(target_inputs.size());
-	for (int index = 0; index < target_inputs.size(); ++index) {
-		correct_confidences(index) =
-			predictive_inputs(target_inputs(index), index);
+	Vector correct_confidences(targets_batch.size());
+	for (Index batch_index = 0; batch_index < targets_batch.size();
+		 ++batch_index) {
+		correct_confidences(batch_index) =
+			logits_batch(targets_batch(batch_index), batch_index);
 	}
 
 	assert(correct_confidences.size() > 0);
@@ -25,23 +23,22 @@ void LossCategoricalCrossEntropy::forward(
 
 	outputs_ = -(correct_confidences.array().log());
 
-	assert(outputs_.rows() == target_inputs.rows());
+	assert(outputs_.rows() == targets_batch.rows());
 }
 
-void LossCategoricalCrossEntropy::backward(
-	const Eigen::VectorXi& target_inputs) {
-	assert(inputs_.cols() == target_inputs.rows() &&
-		   target_inputs.maxCoeff() <= inputs_.rows());
-	assert(inputs_.size() > 0 && target_inputs.size() > 0);
+void LossCategoricalCrossEntropy::Backward(const TargetsBatch& targets_batch) {
+	assert(inputs_.cols() == targets_batch.rows() &&
+		   targets_batch.maxCoeff() <= inputs_.rows());
+	assert(inputs_.size() > 0 && targets_batch.size() > 0);
 
 	inputs_gradient_.resizeLike(inputs_);
-	for (int i = 0; i < inputs_.cols(); ++i) {
-		int label = target_inputs(i);
-		double predictive_input =
+	for (Index i = 0; i < inputs_.cols(); ++i) {
+		Index label = static_cast<Index>(targets_batch(i));
+		LossValue predictive_input =
 			std::max(1e-7, std::min(1 - 1e-7, inputs_(label, i)));
 		inputs_gradient_(label, i) = -1.0 / predictive_input;
 	}
-	inputs_gradient_ /= static_cast<double>(inputs_.cols());
+	inputs_gradient_ /= static_cast<LossValue>(inputs_.cols());
 
 	assert(inputs_gradient_.rows() == inputs_.rows() &&
 		   inputs_gradient_.cols() == inputs_.cols());

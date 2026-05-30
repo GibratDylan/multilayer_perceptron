@@ -2,49 +2,47 @@
 
 #include <ostream>
 
-#include <Eigen/Dense>
-
-NeuronalLayer::NeuronalLayer(size_t input_size, size_t num_neurons)
-	: weights_{Eigen::MatrixXd::Random(static_cast<long>(num_neurons),
-									   static_cast<long>(input_size))},
-	  biases_(num_neurons) {
+NeuronalLayer::NeuronalLayer(InputSize input_size, NeuronCount num_neurons)
+	: weights_{Matrix::Random(static_cast<Index>(num_neurons),
+							  static_cast<Index>(input_size))},
+	  biases_(static_cast<Index>(num_neurons)) {
 	weights_ *= 0.10;
 	biases_.setZero();
 }
 
-void NeuronalLayer::forward(const Eigen::MatrixXd& inputs) {
-	assert(inputs.rows() == weights_.cols() && inputs.size() > 0);
+void NeuronalLayer::Forward(const InputBatch& input_batch) {
+	assert(input_batch.rows() == weights_.cols() && input_batch.size() > 0);
 
-	inputs_ = inputs;
-	outputs_ = weights_ * inputs;
+	inputs_ = input_batch;
+	outputs_ = weights_ * input_batch;
 
 	assert(outputs_.rows() == biases_.rows());
 
 	outputs_.colwise() += biases_;
 
-	assert(inputs.cols() == outputs_.cols() &&
+	assert(input_batch.cols() == outputs_.cols() &&
 		   weights_.rows() == outputs_.rows());
 }
 
-void NeuronalLayer::backward(const Eigen::MatrixXd& inputs) {
-	weights_gradient_ = inputs * inputs_.transpose();
-	biases_gradient_ = inputs.rowwise().sum();
-	inputs_gradient_ = weights_.transpose() * inputs;
+void NeuronalLayer::Backward(const GradientBatch& gradient_batch) {
+	weights_gradient_ = gradient_batch * inputs_.transpose();
+	biases_gradient_ = gradient_batch.rowwise().sum();
+	inputs_gradient_ = weights_.transpose() * gradient_batch;
 }
 
-Eigen::Index NeuronalLayer::getInputSize() const {
+Index NeuronalLayer::GetInputSize() const {
 	return weights_.cols();
 }
 
-Eigen::Index NeuronalLayer::getNumNeurons() const {
+Index NeuronalLayer::GetNumNeurons() const {
 	return weights_.rows();
 }
 
-const Eigen::MatrixXd& NeuronalLayer::getOutputs() const {
+const NeuronalLayer::OutputBatch& NeuronalLayer::GetOutputs() const {
 	return outputs_;
 }
 
-const Eigen::MatrixXd& NeuronalLayer::getInputsGradient() const {
+const NeuronalLayer::GradientBatch& NeuronalLayer::GetInputsGradient() const {
 	return inputs_gradient_;
 }
 

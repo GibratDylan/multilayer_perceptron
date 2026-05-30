@@ -1,22 +1,22 @@
 #include "trainer/metrics.hpp"
 
-#include <Eigen/Dense>
+namespace metrics {
+AccuracyScore Accuracy(const LogitsBatch& logits_batch,
+					   const TargetsBatch& targets_batch) {
+	assert(logits_batch.cols() == targets_batch.rows() &&
+		   targets_batch.maxCoeff() <= logits_batch.rows());
 
-namespace Metrics {
-float accuracy(const Eigen::MatrixXd& predictive_inputs,
-			   const Eigen::VectorXi& target_inputs) {
-	assert(predictive_inputs.cols() == target_inputs.rows() &&
-		   target_inputs.maxCoeff() <= predictive_inputs.rows());
+	assert(logits_batch.size() > 0 && targets_batch.size() > 0);
 
-	assert(predictive_inputs.size() > 0 && target_inputs.size() > 0);
-
-	Eigen::VectorXi predictions(target_inputs.size());
-	for (int index = 0; index < target_inputs.size(); ++index) {
-		predictive_inputs.col(index).maxCoeff(&predictions(index));
+	IntVector predictions(targets_batch.size());
+	for (Index index = 0; index < targets_batch.size(); ++index) {
+		logits_batch.col(index).maxCoeff(&predictions(index));
 	}
 
 	assert(predictions.size() > 0);
 
-	return (predictions.array() == target_inputs.array()).cast<float>().mean();
+	return (predictions.array() == targets_batch.array())
+		.cast<AccuracyScore>()
+		.mean();
 }
-}  // namespace Metrics
+}  // namespace metrics

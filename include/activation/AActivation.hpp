@@ -1,34 +1,43 @@
 #pragma once
 
+#include "types/EigenTypes.hpp"
+
 #include <ostream>
+#include <string_view>
 
-#include <Eigen/Dense>
-
-namespace activationFuncString {
-const std::string RELU = "relu";
-const std::string SOFTMAX = "softmax";
-};	// namespace activationFuncString
+namespace activation_func_string {
+inline constexpr std::string_view kRelu = "relu";
+inline constexpr std::string_view kSoftmax = "softmax";
+}  // namespace activation_func_string
 
 class AActivation {
    public:
-	enum activationFuncType : uint8_t { RELU, SOFTMAX, NONE };
+	using InputBatch = Matrix;
+	using OutputBatch = Matrix;
+	using GradientBatch = Matrix;
+
+	using Inputs = InputBatch;
+	using Outputs = OutputBatch;
+	using Gradients = GradientBatch;
+
+	enum ActivationFuncType : uint8_t { kRelu, kSoftmax, kNone };
 
    protected:
-	Eigen::MatrixXd outputs_;
-	Eigen::MatrixXd inputs_;
+	OutputBatch outputs_;
+	InputBatch inputs_;
 
-	Eigen::MatrixXd inputs_gradient_;
+	GradientBatch inputs_gradient_;
 
    public:
 	virtual ~AActivation() = default;
 
-	virtual void forward(const Eigen::MatrixXd& inputs) = 0;
-	virtual void backward(const Eigen::MatrixXd& inputs) = 0;
+	virtual void Forward(const InputBatch& input_batch) = 0;
+	virtual void Backward(const GradientBatch& gradient_batch) = 0;
 
-	const Eigen::MatrixXd& getOutputs() const;
-	const Eigen::MatrixXd& getInputsGradient() const;
+	const OutputBatch& GetOutputs() const;
+	const GradientBatch& GetInputsGradient() const;
 
-	static AActivation::activationFuncType getActivationType(
+	static AActivation::ActivationFuncType GetActivationType(
 		std::string_view str);
 
 	friend std::ostream& operator<<(std::ostream& os, const AActivation& rhs);

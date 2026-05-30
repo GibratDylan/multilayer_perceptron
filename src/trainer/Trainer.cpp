@@ -3,8 +3,9 @@
 #include "trainer/observer/ITrainerObserver.hpp"
 
 #include <vector>
+#include <cassert>
 
-void Trainer::add_observer(const ITrainerObserver* observer) {
+void Trainer::AddObserver(const ITrainerObserver* observer) {
 	assert(observer != nullptr);
 
 	observers_.push_back(observer);

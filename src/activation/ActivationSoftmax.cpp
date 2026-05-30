@@ -1,32 +1,25 @@
 #include "activation/ActivationSoftmax.hpp"
 
-#include "Eigen/src/Core/Matrix.h"
-
-#include <Eigen/Dense>
-
-void ActivationSoftmax::forward(const Eigen::MatrixXd& inputs) {
-	inputs_ = inputs;
-	outputs_ = inputs.rowwise() - inputs.colwise().maxCoeff();
+void ActivationSoftmax::Forward(const InputBatch& input_batch) {
+	inputs_ = input_batch;
+	outputs_ = input_batch.rowwise() - input_batch.colwise().maxCoeff();
 	outputs_ = outputs_.array().exp();
 	outputs_.array().rowwise() /= outputs_.colwise().sum().array();
 
-	assert(inputs.rows() == outputs_.rows() &&
-		   inputs.cols() == outputs_.cols());
+	assert(input_batch.rows() == outputs_.rows() &&
+		   input_batch.cols() == outputs_.cols());
 }
 
-// Doit etre tester !!!
-void ActivationSoftmax::backward(const Eigen::MatrixXd& inputs) {
-	inputs_gradient_.resizeLike(inputs);
+void ActivationSoftmax::Backward(const GradientBatch& gradient_batch) {
+	inputs_gradient_.resizeLike(gradient_batch);
+	for (Index i = 0; i < gradient_batch.cols(); ++i) {
+		Vector s = outputs_.col(i);
 
-	for (int i = 0; i < inputs.cols(); ++i) {
-		Eigen::VectorXd s = outputs_.col(i);
+		Matrix jacobian = Matrix(s.asDiagonal()) - s * s.transpose();
 
-		Eigen::MatrixXd jacobian =
-			Eigen::MatrixXd(s.asDiagonal()) - s * s.transpose();
-
-		inputs_gradient_.col(i) = jacobian * inputs.col(i);
+		inputs_gradient_.col(i) = jacobian * gradient_batch.col(i);
 	}
 
-	assert(inputs_gradient_.rows() == inputs.rows() &&
-		   inputs_gradient_.cols() == inputs.cols());
+	assert(inputs_gradient_.rows() == gradient_batch.rows() &&
+		   inputs_gradient_.cols() == gradient_batch.cols());
 }

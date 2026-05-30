@@ -3,6 +3,8 @@
 #include "NeuronalLayer.hpp"
 #include "activation/AActivation.hpp"
 #include "loss/ALoss.hpp"
+#include "types/EigenTypes.hpp"
+#include "types/Types.hpp"
 
 #include <memory>
 #include <vector>
@@ -13,25 +15,29 @@ class Network {
 	std::vector<std::unique_ptr<AActivation>> activation_func_;
 	std::unique_ptr<ALoss> loss_func_;
 
-	size_t size_{};
+	LayerCount size_{};
 
    public:
-	Network(std::unique_ptr<ALoss> loss_func);
+	using InputBatch = Matrix;
+	using TargetsBatch = IntVector;
 
-	Network& addLayer(NeuronalLayer&& neuronal_layer,
+	using Inputs = InputBatch;
+	using Targets = TargetsBatch;
+
+	explicit Network(std::unique_ptr<ALoss> loss_func);
+
+	Network& AddLayer(NeuronalLayer&& neuronal_layer,
 					  std::unique_ptr<AActivation>&& activation_func);
 
-	double forwardPass(const Eigen::MatrixXd& inputs,
-					   const Eigen::VectorXi& target_inputs);
-	void backwardPass(const Eigen::MatrixXd& inputs);
+	LossValue ForwardPass(const InputBatch& input_batch,
+						  const TargetsBatch& targets_batch);
+	void BackwardPass(const InputBatch& input_batch);
 
-	const NeuronalLayer& getNeuronalLayer() const;
-	const AActivation& getActivationLayer() const;
-	const ALoss& getLossLayer() const;
-
-	// void operator++();
+	const NeuronalLayer& GetNeuronalLayer() const;
+	const AActivation& GetActivationLayer() const;
+	const ALoss& GetLossLayer() const;
 
    private:
-	void addNeuronalLayer(NeuronalLayer&& neuronal_layer);
-	void addActivationLayer(std::unique_ptr<AActivation>&& activation_func);
+	void AddNeuronalLayer(NeuronalLayer&& neuronal_layer);
+	void AddActivationLayer(std::unique_ptr<AActivation>&& activation_func);
 };

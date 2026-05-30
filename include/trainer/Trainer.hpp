@@ -9,7 +9,7 @@ class Trainer {
 	std::vector<const ITrainerObserver*> observers_;
 
    public:
-	void add_observer(const ITrainerObserver* observer);
+	void AddObserver(const ITrainerObserver* observer);
 
 	// void forwardPass();
 	// void backwardPass();

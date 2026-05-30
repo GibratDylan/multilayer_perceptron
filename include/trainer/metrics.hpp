@@ -1,8 +1,15 @@
 #pragma once
 
-#include <Eigen/Dense>
+#include "types/EigenTypes.hpp"
+#include "types/Types.hpp"
 
 namespace metrics {
-float accuracy(const Eigen::MatrixXd& predictive_inputs,
-			   const Eigen::VectorXi& target_inputs);
-}
+using LogitsBatch = Matrix;
+using TargetsBatch = IntVector;
+
+using Logits = LogitsBatch;
+using Targets = TargetsBatch;
+
+AccuracyScore Accuracy(const LogitsBatch& logits_batch,
+					   const TargetsBatch& targets_batch);
+}  // namespace metrics

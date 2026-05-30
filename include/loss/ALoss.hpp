@@ -1,35 +1,48 @@
 #pragma once
 
+#include "types/EigenTypes.hpp"
+#include "types/Types.hpp"
+
 #include <ostream>
+#include <string_view>
 
-#include <Eigen/Dense>
-
-namespace lossFuncString {
-const std::string CATCROSSENTROPY = "categorical_cross_entropy";
-};
+namespace loss_func_string {
+inline constexpr std::string_view kCatCrossentropy =
+	"categorical_cross_entropy";
+}  // namespace loss_func_string
 
 class ALoss {
    public:
-	enum lossFuncType : uint8_t { CATCROSSENTROPY, NONE };
+	using LogitsBatch = Matrix;
+	using TargetsBatch = IntVector;
+	using LossesBatch = Vector;
+	using LogitsGradientBatch = Matrix;
+
+	using Logits = LogitsBatch;
+	using Targets = TargetsBatch;
+	using Losses = LossesBatch;
+	using Gradients = LogitsGradientBatch;
+
+	enum LossFuncType : uint8_t { kCatCrossentropy, kNone };
 
    protected:
-	Eigen::VectorXd outputs_;
-	Eigen::MatrixXd inputs_;
+	LossesBatch outputs_;
+	LogitsBatch inputs_;
 
-	Eigen::MatrixXd inputs_gradient_;
+	LogitsGradientBatch inputs_gradient_;
 
    public:
 	virtual ~ALoss() = default;
 
-	virtual void forward(const Eigen::MatrixXd& predictive_inputs,
-						 const Eigen::VectorXi& target_inputs) = 0;
-	virtual void backward(const Eigen::VectorXi& target_inputs) = 0;
+	virtual void Forward(const LogitsBatch& logits_batch,
+						 const TargetsBatch& targets_batch) = 0;
+	virtual void Backward(const TargetsBatch& targets_batch) = 0;
 
-	const Eigen::VectorXd& getOutputs() const;
-	const Eigen::MatrixXd& getInputsGradient() const;
-	double getLoss() const;
+	const LossesBatch& GetOutputs() const;
+	const LogitsGradientBatch& GetInputsGradient() const;
+	LossValue GetLoss() const;
 
-	static ALoss::lossFuncType getLossType(std::string_view str);
+	static ALoss::LossFuncType GetLossType(std::string_view str);
 
 	friend std::ostream& operator<<(std::ostream& os, const ALoss& rhs);
 };

@@ -2,24 +2,22 @@
 
 #include <ostream>
 
-#include <Eigen/Dense>
-
-double ALoss::getLoss() const {
+LossValue ALoss::GetLoss() const {
 	assert(outputs_.size() > 0);
 	return outputs_.mean();
 }
 
-const Eigen::VectorXd& ALoss::getOutputs() const {
+const ALoss::LossesBatch& ALoss::GetOutputs() const {
 	return outputs_;
 }
 
-const Eigen::MatrixXd& ALoss::getInputsGradient() const {
+const ALoss::LogitsGradientBatch& ALoss::GetInputsGradient() const {
 	return inputs_gradient_;
 }
 
-ALoss::lossFuncType ALoss::getLossType(std::string_view str) {
-	if (str == lossFuncString::CATCROSSENTROPY) return CATCROSSENTROPY;
-	return NONE;
+ALoss::LossFuncType ALoss::GetLossType(std::string_view str) {
+	if (str == loss_func_string::kCatCrossentropy) return kCatCrossentropy;
+	return kNone;
 }
 
 std::ostream& operator<<(std::ostream& os, const ALoss& rhs) {
@@ -29,6 +27,6 @@ std::ostream& operator<<(std::ostream& os, const ALoss& rhs) {
 	os << "  outputs:\n" << rhs.outputs_.transpose().format(vec_fmt);
 	os << "  inputs_gradient:\n"
 	   << rhs.inputs_gradient_.format(mat_fmt) << "\n";
-	os << "  loss_means:\n" << rhs.getLoss();
+	os << "  loss_means:\n" << rhs.GetLoss();
 	return os;
 }

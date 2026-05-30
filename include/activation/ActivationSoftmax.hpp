@@ -2,10 +2,12 @@
 
 #include "AActivation.hpp"
 
-#include <Eigen/Dense>
-
 class ActivationSoftmax : public AActivation {
    public:
-	void forward(const Eigen::MatrixXd& inputs) override;
-	void backward(const Eigen::MatrixXd& inputs) override;
+	using InputBatch = AActivation::InputBatch;
+	using OutputBatch = AActivation::OutputBatch;
+	using GradientBatch = AActivation::GradientBatch;
+
+	void Forward(const InputBatch& input_batch) override;
+	void Backward(const GradientBatch& gradient_batch) override;
 };

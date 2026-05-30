@@ -3,11 +3,10 @@
 #include <fstream>
 #include <iostream>
 
-#include <Eigen/Dense>
-
-// Rajouter d'autres metrics (Loss, learning rate, etc..) et les prints dans le terminal
-void TrainerObserverMetricsWriter::on_epoch_end(int epoch_index,
-												float accuracy) {
+// Rajouter d'autres metrics (Loss, learning rate, etc..) et les prints dans le
+// terminal
+void TrainerObserverMetricsWriter::OnEpochEnd(EpochIndex epoch_index,
+											  AccuracyScore accuracy) {
 	std::ofstream metrics_csv{"metrics.csv", std::ios::out | std::ios::app};
 
 	if (!metrics_csv.good()) {

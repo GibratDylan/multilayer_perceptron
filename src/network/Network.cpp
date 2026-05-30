@@ -1,65 +1,64 @@
 #include "network/Network.hpp"
 
+#include <functional>
 #include <limits>
 #include <memory>
-
-#include <Eigen/Dense>
 
 Network::Network(std::unique_ptr<ALoss> loss_func)
 	: loss_func_(std::move(loss_func)) {}
 
-Network& Network::addLayer(NeuronalLayer&& neuronal_layer,
+Network& Network::AddLayer(NeuronalLayer&& neuronal_layer,
 						   std::unique_ptr<AActivation>&& activation_func) {
 	assert(activation_func != nullptr);
 	assert(neuronal_layers_.size() == activation_func_.size());
-	assert(neuronal_layer.getInputSize() > 0);
-	assert(neuronal_layer.getNumNeurons() > 0);
+	assert(neuronal_layer.GetInputSize() > 0);
+	assert(neuronal_layer.GetNumNeurons() > 0);
 
 	if (!neuronal_layers_.empty()) {
 		const NeuronalLayer& previous_layer = neuronal_layers_.back();
-		assert(previous_layer.getNumNeurons() == neuronal_layer.getInputSize());
+		assert(previous_layer.GetNumNeurons() == neuronal_layer.GetInputSize());
 	}
 
-	addNeuronalLayer(std::move(neuronal_layer));
-	addActivationLayer(std::move(activation_func));
+	AddNeuronalLayer(std::move(neuronal_layer));
+	AddActivationLayer(std::move(activation_func));
 	assert(neuronal_layers_.size() == activation_func_.size());
 
 	return *this;
 }
 
-double Network::forwardPass(const Eigen::MatrixXd& inputs,
-							const Eigen::VectorXi& target_inputs) {
+LossValue Network::ForwardPass(const InputBatch& input_batch,
+							   const TargetsBatch& targets_batch) {
 	assert(size_ > 0);
-	assert(inputs.cols() == target_inputs.rows() &&
-		   target_inputs.maxCoeff() <= inputs.rows());
-	assert(inputs.size() > 0 && target_inputs.size() > 0);
+	assert(input_batch.cols() == targets_batch.rows() &&
+		   targets_batch.maxCoeff() <= input_batch.rows());
+	assert(input_batch.size() > 0 && targets_batch.size() > 0);
 
-	std::reference_wrapper<const Eigen::MatrixXd> current = inputs;
+	std::reference_wrapper<const InputBatch> current = input_batch;
 
-	for (size_t index = 0; index < size_; ++index) {
-		neuronal_layers_[index].forward(current);
-		activation_func_[index]->forward(neuronal_layers_[index].getOutputs());
-		current = activation_func_[index]->getOutputs();
+	for (LayerIndex index = 0; index < size_; ++index) {
+		neuronal_layers_[index].Forward(current);
+		activation_func_[index]->Forward(neuronal_layers_[index].GetOutputs());
+		current = activation_func_[index]->GetOutputs();
 	}
 
-	loss_func_->forward(activation_func_[size_ - 1]->getOutputs(),
-						target_inputs);
+	loss_func_->Forward(activation_func_[size_ - 1]->GetOutputs(),
+						targets_batch);
 
-	return loss_func_->getLoss();
+	return loss_func_->GetLoss();
 }
 
 // DOIT ETRE IMPLEMENTER
-void Network::backwardPass(const Eigen::MatrixXd& inputs) {
-	(void)inputs;
+void Network::BackwardPass(const InputBatch& input_batch) {
+	(void)input_batch;
 }
 
-void Network::addNeuronalLayer(NeuronalLayer&& neuronal_layer) {
-	assert(size_ < std::numeric_limits<size_t>::max());
+void Network::AddNeuronalLayer(NeuronalLayer&& neuronal_layer) {
+	assert(size_ < std::numeric_limits<LayerCount>::max());
 	neuronal_layers_.push_back(std::move(neuronal_layer));
 	++size_;
 }
 
-void Network::addActivationLayer(
+void Network::AddActivationLayer(
 	std::unique_ptr<AActivation>&& activation_func) {
 	assert(activation_func != nullptr);
 	activation_func_.push_back(std::move(activation_func));

@@ -2,41 +2,39 @@
 
 #include <ostream>
 
-#include <Eigen/Dense>
+LossValue ActivationSoftmaxLossCategoricalCrossentropy::Forward(
+	const InputBatch& input_batch, const TargetsBatch& targets_batch) {
+	activation_.Forward(input_batch);
+	loss_.Forward(activation_.GetOutputs(), targets_batch);
 
-double ActivationSoftmaxLossCategoricalCrossentropy::forward(
-	const Eigen::MatrixXd& inputs, const Eigen::VectorXi& target_inputs) {
-	activation_.forward(inputs);
-	loss_.forward(activation_.getOutputs(), target_inputs);
-
-	return loss_.getLoss();
+	return loss_.GetLoss();
 }
 
-void ActivationSoftmaxLossCategoricalCrossentropy::backward(
-	const Eigen::VectorXi& target_inputs) {
+void ActivationSoftmaxLossCategoricalCrossentropy::Backward(
+	const TargetsBatch& targets_batch) {
 	inputs_gradient_ = outputs_;
 
-	const Eigen::Index samples = target_inputs.size();
+	const Index batch_size = targets_batch.size();
 
-	assert(inputs_gradient_.cols() == target_inputs.rows() &&
-		   target_inputs.maxCoeff() <= inputs_gradient_.rows());
+	assert(inputs_gradient_.cols() == targets_batch.rows() &&
+		   targets_batch.maxCoeff() <= inputs_gradient_.rows());
 
-	assert(inputs_gradient_.size() > 0 && target_inputs.size() > 0);
+	assert(inputs_gradient_.size() > 0 && targets_batch.size() > 0);
 
-	for (Eigen::Index index = 0; index < samples; ++index) {
-		inputs_gradient_(target_inputs(index), index) -= 1.0;
+	for (Index index = 0; index < batch_size; ++index) {
+		inputs_gradient_(targets_batch(index), index) -= 1.0;
 	}
 
-	inputs_gradient_ /= static_cast<double>(samples);
+	inputs_gradient_ /= static_cast<LossValue>(batch_size);
 }
 
-const Eigen::MatrixXd&
-ActivationSoftmaxLossCategoricalCrossentropy::getOutputs() const {
+const ActivationSoftmaxLossCategoricalCrossentropy::OutputBatch&
+ActivationSoftmaxLossCategoricalCrossentropy::GetOutputs() const {
 	return outputs_;
 }
 
-const Eigen::MatrixXd&
-ActivationSoftmaxLossCategoricalCrossentropy::getInputsGradient() const {
+const ActivationSoftmaxLossCategoricalCrossentropy::GradientBatch&
+ActivationSoftmaxLossCategoricalCrossentropy::GetInputsGradient() const {
 	return inputs_gradient_;
 }
 
@@ -50,8 +48,8 @@ std::ostream& operator<<(
 	os << "  inputs_gradient:\n"
 	   << rhs.inputs_gradient_.format(mat_fmt) << "\n";
 	os << "  loss_outputs:\n"
-	   << rhs.loss_.getOutputs().transpose().format(vec_fmt);
-	os << "  loss_means:\n" << rhs.loss_.getLoss();
+	   << rhs.loss_.GetOutputs().transpose().format(vec_fmt);
+	os << "  loss_means:\n" << rhs.loss_.GetLoss();
 
 	return os;
 }
