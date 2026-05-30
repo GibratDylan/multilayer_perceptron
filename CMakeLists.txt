@@ -37,10 +37,11 @@ add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/loss/LossCategoricalCrossEntropy.cpp
 	${SRCS_DIR}/activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.cpp
 	${SRCS_DIR}/trainer/Trainer.cpp
-	${SRCS_DIR}/trainer/Metrics.cpp
+	${SRCS_DIR}/trainer/metrics.cpp
 	${SRCS_DIR}/trainer/observer/TrainerObserverMetricsWriter.cpp
 	${SRCS_DIR}/network/Network.cpp
 	${SRCS_DIR}/config/Config.cpp
+	${SRCS_DIR}/config/configUtils.cpp
 
 	${HEADERS_DIR}/NeuronalLayer.hpp
 	${HEADERS_DIR}/activation/AActivation.hpp
@@ -51,10 +52,11 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.hpp
 	${HEADERS_DIR}/trainer/Trainer.hpp
 	${HEADERS_DIR}/trainer/Metrics.hpp
-	${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsWriter.hpp
+	${HEADERS_DIR}/trainer/observer/TrainerObservermetricsWriter.hpp
 	${HEADERS_DIR}/trainer/observer/ITrainerObserver.hpp
 	${HEADERS_DIR}/network/Network.hpp
 	${HEADERS_DIR}/config/Config.hpp
+	${HEADERS_DIR}/config/configUtils.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <ostream>
 
 #include <Eigen/Dense>
@@ -16,7 +17,7 @@ class NeuronalLayer {
 	Eigen::MatrixXd inputs_gradient_;
 
    public:
-	explicit NeuronalLayer(unsigned int input_size, unsigned int num_neurons);
+	explicit NeuronalLayer(size_t input_size, size_t num_neurons);
 	NeuronalLayer(const NeuronalLayer& other) = default;
 	NeuronalLayer& operator=(const NeuronalLayer& other) = default;
 	NeuronalLayer(NeuronalLayer&& other) = default;

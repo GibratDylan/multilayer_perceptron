@@ -5,7 +5,7 @@
 
 #include <Eigen/Dense>
 
-// Rajouter d'autres metrics (Loss, learning rate, etc..)
+// Rajouter d'autres metrics (Loss, learning rate, etc..) et les prints dans le terminal
 void TrainerObserverMetricsWriter::on_epoch_end(int epoch_index,
 												float accuracy) {
 	std::ofstream metrics_csv{"metrics.csv", std::ios::out | std::ios::app};

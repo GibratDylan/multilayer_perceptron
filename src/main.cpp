@@ -5,7 +5,7 @@
 #include "config/Config.hpp"
 #include "loss/LossCategoricalCrossEntropy.hpp"
 #include "network/Network.hpp"
-#include "trainer/Metrics.hpp"
+#include "trainer/metrics.hpp"
 #include "trainer/observer/TrainerObserverMetricsWriter.hpp"
 
 #include <iostream>

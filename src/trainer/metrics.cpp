@@ -1,4 +1,4 @@
-#include "trainer/Metrics.hpp"
+#include "trainer/metrics.hpp"
 
 #include <Eigen/Dense>
 
