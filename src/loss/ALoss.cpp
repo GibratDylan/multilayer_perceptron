@@ -2,16 +2,16 @@
 
 #include <ostream>
 
-LossValue ALoss::GetLoss() const {
+float ALoss::GetLoss() const {
 	assert(outputs_.size() > 0);
 	return outputs_.mean();
 }
 
-const ALoss::LossesBatch& ALoss::GetOutputs() const {
+VectorIn ALoss::GetOutputs() const {
 	return outputs_;
 }
 
-const ALoss::LogitsGradientBatch& ALoss::GetInputsGradient() const {
+MatrixIn ALoss::GetInputsGradient() const {
 	return inputs_gradient_;
 }
 

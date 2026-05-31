@@ -23,17 +23,17 @@ int main(int argc, const char** argv) {
 
 	/// inputs = rows(input), batch = cols(batch)
 	Matrix inputs(config.GetNeuralLayer().front(), config.GetBatchSize());
-	for (Index i = 0; i < inputs.rows(); ++i) {
-		for (Index j = 0; j < inputs.cols(); ++j) inputs(i, j) = 0.5;
+	for (int i = 0; i < inputs.rows(); ++i) {
+		for (int j = 0; j < inputs.cols(); ++j) inputs(i, j) = 0.5;
 	}
 
 	/// targets = rows(batch)
 	IntVector targets(config.GetBatchSize());
-	for (Index i = 0; i < targets.rows(); ++i) targets(i) = 1;
+	for (int i = 0; i < targets.rows(); ++i) targets(i) = 1;
 
 	Network network{std::make_unique<LossCategoricalCrossEntropy>()};
 
-	for (LayerIndex i = 0; i < config.GetSize() - 2; ++i)
+	for (int i = 0; i < config.GetSize() - 2; ++i)
 		network.AddLayer(NeuronalLayer{config.GetNeuralLayer()[i],
 									   config.GetNeuralLayer()[i + 1]},
 						 std::make_unique<ActivationReLU>());
@@ -70,5 +70,9 @@ int main(int argc, const char** argv) {
 	return 0;
 }
 
-// Eigen::MatrixXf or Eigen::MatrixXd ?
+// Chercher erreur optimisation
 // Optimise memory usage
+// Modifier layer config
+// Initialiser avec std::inisializer_list
+// Corriger erreur lint
+// Rajouter et verifier les assert

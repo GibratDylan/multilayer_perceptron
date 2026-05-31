@@ -1,4 +1,4 @@
-#include "config/configUtils.hpp"
+#include "config/config_utils.hpp"
 
 #include <cmath>
 #include <cstdint>
@@ -20,29 +20,29 @@ std::string_view Trim(std::string_view value) {
 	return value;
 }
 
-bool ParseUnsigned(std::string_view token, ConfigCount* out) {
+bool ParseSigned(std::string_view token, int64_t* out) {
 	if (token.empty() || out == nullptr) return false;
 	std::size_t pos = 0;
-	std::uint64_t value = 0;
+	int64_t value = 0;
 	try {
-		value = std::stoull(std::string(token), &pos);
+		value = std::stoi(std::string(token), &pos);
 	} catch (const std::invalid_argument&) {
 		return false;
 	} catch (const std::out_of_range&) {
 		return false;
 	}
 	if (pos != token.size()) return false;
-	if (value > std::numeric_limits<ConfigCount>::max()) return false;
-	*out = static_cast<ConfigCount>(value);
+	if (value > std::numeric_limits<int>::max()) return false;
+	*out = value;
 	return true;
 }
 
-bool ParseFloat(std::string_view token, LearningRate* out) {
+bool ParseFloat(std::string_view token, float* out) {
 	if (token.empty() || out == nullptr) return false;
 	std::size_t pos = 0;
-	LearningRate value = 0.0;
+	float value = 0.F;
 	try {
-		value = std::stod(std::string(token), &pos);
+		value = std::stof(std::string(token), &pos);
 	} catch (const std::invalid_argument&) {
 		return false;
 	} catch (const std::out_of_range&) {
@@ -76,7 +76,7 @@ std::vector<std::string> SplitTokens(std::string_view value) {
 	return tokens;
 }
 
-bool ReportError(LineNumber line_number, std::string_view message) {
+bool ReportError(int64_t line_number, std::string_view message) {
 	std::cerr << "Config parse error at line " << line_number << ": " << message
 			  << '\n';
 	return false;

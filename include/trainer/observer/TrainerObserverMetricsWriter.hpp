@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ITrainerObserver.hpp"
+#include <cstdint>
 
 class TrainerObserverMetricsWriter : public ITrainerObserver {
    public:
-	void OnEpochEnd(EpochIndex epoch_index, AccuracyScore accuracy) override;
+	void OnEpochEnd(int64_t epoch_index, float accuracy) override;
 };

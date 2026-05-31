@@ -12,30 +12,22 @@ inline constexpr std::string_view kSoftmax = "softmax";
 
 class AActivation {
    public:
-	using InputBatch = Matrix;
-	using OutputBatch = Matrix;
-	using GradientBatch = Matrix;
-
-	using Inputs = InputBatch;
-	using Outputs = OutputBatch;
-	using Gradients = GradientBatch;
-
 	enum ActivationFuncType : uint8_t { kRelu, kSoftmax, kNone };
 
    protected:
-	OutputBatch outputs_;
-	InputBatch inputs_;
+	Matrix outputs_;
+	Matrix inputs_;
 
-	GradientBatch inputs_gradient_;
+	Matrix inputs_gradient_;
 
    public:
 	virtual ~AActivation() = default;
 
-	virtual void Forward(const InputBatch& input_batch) = 0;
-	virtual void Backward(const GradientBatch& gradient_batch) = 0;
+	virtual void Forward(MatrixIn input_batch) = 0;
+	virtual void Backward(MatrixIn gradient_batch) = 0;
 
-	const OutputBatch& GetOutputs() const;
-	const GradientBatch& GetInputsGradient() const;
+	MatrixIn GetOutputs() const;
+	MatrixIn GetInputsGradient() const;
 
 	static AActivation::ActivationFuncType GetActivationType(
 		std::string_view str);

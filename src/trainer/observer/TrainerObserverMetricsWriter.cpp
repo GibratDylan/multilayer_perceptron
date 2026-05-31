@@ -2,11 +2,12 @@
 
 #include <fstream>
 #include <iostream>
+#include <cstdint>
 
 // Rajouter d'autres metrics (Loss, learning rate, etc..) et les prints dans le
 // terminal
-void TrainerObserverMetricsWriter::OnEpochEnd(EpochIndex epoch_index,
-											  AccuracyScore accuracy) {
+void TrainerObserverMetricsWriter::OnEpochEnd(int64_t epoch_index,
+											  float accuracy) {
 	std::ofstream metrics_csv{"metrics.csv", std::ios::out | std::ios::app};
 
 	if (!metrics_csv.good()) {

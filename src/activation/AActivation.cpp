@@ -2,11 +2,11 @@
 
 #include <ostream>
 
-const AActivation::OutputBatch& AActivation::GetOutputs() const {
+MatrixIn AActivation::GetOutputs() const {
 	return outputs_;
 }
 
-const AActivation::GradientBatch& AActivation::GetInputsGradient() const {
+MatrixIn AActivation::GetInputsGradient() const {
 	return inputs_gradient_;
 }
 

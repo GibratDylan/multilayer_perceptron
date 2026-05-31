@@ -2,19 +2,17 @@
 
 #include <ostream>
 
-NeuronalLayer::NeuronalLayer(InputSize input_size, NeuronCount num_neurons)
-	: weights_{Matrix::Random(static_cast<Index>(num_neurons),
-							  static_cast<Index>(input_size))},
-	  biases_(static_cast<Index>(num_neurons)) {
-	weights_ *= 0.10;
+NeuronalLayer::NeuronalLayer(int64_t input_size, int64_t num_neurons)
+	: weights_{Matrix::Random(num_neurons, input_size)}, biases_(num_neurons) {
+	weights_ *= 0.1F;
 	biases_.setZero();
 }
 
-void NeuronalLayer::Forward(const InputBatch& input_batch) {
+void NeuronalLayer::Forward(MatrixIn input_batch) {
 	assert(input_batch.rows() == weights_.cols() && input_batch.size() > 0);
 
 	inputs_ = input_batch;
-	outputs_ = weights_ * input_batch;
+	outputs_.noalias() = weights_ * input_batch;
 
 	assert(outputs_.rows() == biases_.rows());
 
@@ -24,25 +22,25 @@ void NeuronalLayer::Forward(const InputBatch& input_batch) {
 		   weights_.rows() == outputs_.rows());
 }
 
-void NeuronalLayer::Backward(const GradientBatch& gradient_batch) {
-	weights_gradient_ = gradient_batch * inputs_.transpose();
+void NeuronalLayer::Backward(MatrixIn gradient_batch) {
+	weights_gradient_.noalias() = gradient_batch * inputs_.transpose();
 	biases_gradient_ = gradient_batch.rowwise().sum();
-	inputs_gradient_ = weights_.transpose() * gradient_batch;
+	inputs_gradient_.noalias() = weights_.transpose() * gradient_batch;
 }
 
-Index NeuronalLayer::GetInputSize() const {
+int64_t NeuronalLayer::GetInputSize() const {
 	return weights_.cols();
 }
 
-Index NeuronalLayer::GetNumNeurons() const {
+int64_t NeuronalLayer::GetNumNeurons() const {
 	return weights_.rows();
 }
 
-const NeuronalLayer::OutputBatch& NeuronalLayer::GetOutputs() const {
+MatrixIn NeuronalLayer::GetOutputs() const {
 	return outputs_;
 }
 
-const NeuronalLayer::GradientBatch& NeuronalLayer::GetInputsGradient() const {
+MatrixIn NeuronalLayer::GetInputsGradient() const {
 	return inputs_gradient_;
 }
 

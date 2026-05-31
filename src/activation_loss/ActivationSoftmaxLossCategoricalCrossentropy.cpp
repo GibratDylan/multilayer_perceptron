@@ -2,40 +2,41 @@
 
 #include <ostream>
 
-LossValue ActivationSoftmaxLossCategoricalCrossentropy::Forward(
-	const InputBatch& input_batch, const TargetsBatch& targets_batch) {
+void ActivationSoftmaxLossCategoricalCrossentropy::Forward(
+	MatrixIn input_batch, IntVectorIn targets_batch) {
 	activation_.Forward(input_batch);
 	loss_.Forward(activation_.GetOutputs(), targets_batch);
-
-	return loss_.GetLoss();
 }
 
 void ActivationSoftmaxLossCategoricalCrossentropy::Backward(
-	const TargetsBatch& targets_batch) {
+	IntVectorIn targets_batch) {
 	inputs_gradient_ = outputs_;
 
-	const Index batch_size = targets_batch.size();
+	const int64_t batch_size = targets_batch.size();
 
 	assert(inputs_gradient_.cols() == targets_batch.rows() &&
 		   targets_batch.maxCoeff() <= inputs_gradient_.rows());
 
 	assert(inputs_gradient_.size() > 0 && targets_batch.size() > 0);
 
-	for (Index index = 0; index < batch_size; ++index) {
-		inputs_gradient_(targets_batch(index), index) -= 1.0;
+	for (int64_t index = 0; index < batch_size; ++index) {
+		inputs_gradient_(targets_batch(index), index) -= 1.F;
 	}
 
-	inputs_gradient_ /= static_cast<LossValue>(batch_size);
+	inputs_gradient_ /= static_cast<float>(batch_size);
 }
 
-const ActivationSoftmaxLossCategoricalCrossentropy::OutputBatch&
-ActivationSoftmaxLossCategoricalCrossentropy::GetOutputs() const {
+MatrixIn ActivationSoftmaxLossCategoricalCrossentropy::GetOutputs() const {
 	return outputs_;
 }
 
-const ActivationSoftmaxLossCategoricalCrossentropy::GradientBatch&
-ActivationSoftmaxLossCategoricalCrossentropy::GetInputsGradient() const {
+MatrixIn ActivationSoftmaxLossCategoricalCrossentropy::GetInputsGradient()
+	const {
 	return inputs_gradient_;
+}
+
+float ActivationSoftmaxLossCategoricalCrossentropy::GetLoss() const {
+	return loss_.GetLoss();
 }
 
 std::ostream& operator<<(

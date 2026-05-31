@@ -4,8 +4,8 @@
 #include "activation/AActivation.hpp"
 #include "loss/ALoss.hpp"
 #include "types/EigenTypes.hpp"
-#include "types/Types.hpp"
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -15,23 +15,16 @@ class Network {
 	std::vector<std::unique_ptr<AActivation>> activation_func_;
 	std::unique_ptr<ALoss> loss_func_;
 
-	LayerCount size_{};
+	int64_t size_{};
 
    public:
-	using InputBatch = Matrix;
-	using TargetsBatch = IntVector;
-
-	using Inputs = InputBatch;
-	using Targets = TargetsBatch;
-
 	explicit Network(std::unique_ptr<ALoss> loss_func);
 
 	Network& AddLayer(NeuronalLayer&& neuronal_layer,
 					  std::unique_ptr<AActivation>&& activation_func);
 
-	LossValue ForwardPass(const InputBatch& input_batch,
-						  const TargetsBatch& targets_batch);
-	void BackwardPass(const InputBatch& input_batch);
+	float ForwardPass(MatrixIn input_batch, IntVectorIn targets_batch);
+	void BackwardPass(MatrixIn input_batch);
 
 	const NeuronalLayer& GetNeuronalLayer() const;
 	const AActivation& GetActivationLayer() const;

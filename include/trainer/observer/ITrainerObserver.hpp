@@ -1,9 +1,9 @@
 #pragma once
 
-#include "types/Types.hpp"
+#include <cstdint>
 
 class ITrainerObserver {
    public:
 	virtual ~ITrainerObserver() = default;
-	virtual void OnEpochEnd(EpochIndex epoch_index, AccuracyScore accuracy) = 0;
+	virtual void OnEpochEnd(int64_t epoch_index, float accuracy) = 0;
 };

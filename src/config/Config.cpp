@@ -1,7 +1,7 @@
 #include "config/Config.hpp"
 
 #include "activation/AActivation.hpp"
-#include "config/configUtils.hpp"
+#include "config/config_utils.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -49,8 +49,7 @@ void Config::Reset() {
 }
 
 bool Config::ParseSingleValue(bool* seen, const Tokens& tokens,
-							  LineNumber line_number,
-							  ParseSingle parse_and_set) {
+							  int64_t line_number, ParseSingle parse_and_set) {
 	if (*seen) {
 		return config_utils::ReportError(
 			line_number, "duplicate '" + std::string(tokens[0]) + "' entry");
@@ -67,37 +66,37 @@ bool Config::ParseSingleValue(bool* seen, const Tokens& tokens,
 	return true;
 }
 
-bool Config::HandleEpochs(const Tokens& tokens, LineNumber line_number) {
+bool Config::HandleEpochs(const Tokens& tokens, int64_t line_number) {
 	return ParseSingleValue(&seen_epochs_, tokens, line_number,
 							&Config::ParseEpochs);
 }
 
-bool Config::HandleLearningRate(const Tokens& tokens, LineNumber line_number) {
+bool Config::HandleLearningRate(const Tokens& tokens, int64_t line_number) {
 	return ParseSingleValue(&seen_learning_rate_, tokens, line_number,
 							&Config::ParseLearningRate);
 }
 
-bool Config::HandleBatchSize(const Tokens& tokens, LineNumber line_number) {
+bool Config::HandleBatchSize(const Tokens& tokens, int64_t line_number) {
 	return ParseSingleValue(&seen_batch_size_, tokens, line_number,
 							&Config::ParseBatchSize);
 }
 
-bool Config::HandleLoss(const Tokens& tokens, LineNumber line_number) {
+bool Config::HandleLoss(const Tokens& tokens, int64_t line_number) {
 	return ParseSingleValue(&seen_loss_, tokens, line_number,
 							&Config::ParseLoss);
 }
 
-bool Config::ParseEpochs(std::string_view token, LineNumber line_number) {
-	EpochCount value = 0;
-	if (!config_utils::ParseUnsigned(token, &value) || value == 0) {
+bool Config::ParseEpochs(std::string_view token, int64_t line_number) {
+	int64_t value = 0;
+	if (!config_utils::ParseSigned(token, &value) || value == 0) {
 		return config_utils::ReportError(line_number, "invalid 'epochs' value");
 	}
 	epochs_ = value;
 	return true;
 }
 
-bool Config::ParseLearningRate(std::string_view token, LineNumber line_number) {
-	LearningRate value = 0.0;
+bool Config::ParseLearningRate(std::string_view token, int64_t line_number) {
+	float value = 0.0;
 	if (!config_utils::ParseFloat(token, &value) || value <= 0.0) {
 		return config_utils::ReportError(line_number,
 										 "invalid 'learning_rate' value");
@@ -106,7 +105,7 @@ bool Config::ParseLearningRate(std::string_view token, LineNumber line_number) {
 	return true;
 }
 
-bool Config::ParseLoss(std::string_view token, LineNumber line_number) {
+bool Config::ParseLoss(std::string_view token, int64_t line_number) {
 	if (!IsLossFuncValid(token)) {
 		return config_utils::ReportError(line_number, "invalid 'loss' value");
 	}
@@ -114,9 +113,9 @@ bool Config::ParseLoss(std::string_view token, LineNumber line_number) {
 	return true;
 }
 
-bool Config::ParseBatchSize(std::string_view token, LineNumber line_number) {
-	BatchSize value = 0;
-	if (!config_utils::ParseUnsigned(token, &value) || value == 0) {
+bool Config::ParseBatchSize(std::string_view token, int64_t line_number) {
+	int64_t value = 0;
+	if (!config_utils::ParseSigned(token, &value) || value == 0) {
 		return config_utils::ReportError(line_number,
 										 "invalid 'batch_size' value");
 	}
@@ -124,15 +123,14 @@ bool Config::ParseBatchSize(std::string_view token, LineNumber line_number) {
 	return true;
 }
 
-bool Config::ParseLayer(const Tokens& tokens, LineNumber line_number) {
+bool Config::ParseLayer(const Tokens& tokens, int64_t line_number) {
 	if (tokens.size() != 4) {
 		return config_utils::ReportError(line_number, "invalid 'layer' format");
 	}
-	LayerSize input_size = 0;
-	LayerSize output_size = 0;
-	if (!config_utils::ParseUnsigned(tokens[1], &input_size) ||
-		input_size == 0 ||
-		!config_utils::ParseUnsigned(tokens[2], &output_size) ||
+	int64_t input_size = 0;
+	int64_t output_size = 0;
+	if (!config_utils::ParseSigned(tokens[1], &input_size) || input_size == 0 ||
+		!config_utils::ParseSigned(tokens[2], &output_size) ||
 		output_size == 0) {
 		return config_utils::ReportError(line_number, "invalid 'layer' sizes");
 	}
@@ -162,7 +160,7 @@ Config::Handlers Config::BuildHandlers() {
 
 bool Config::ParseLines(std::ifstream& file) {
 	std::string line;
-	LineNumber line_number = 0;
+	int64_t line_number = 0;
 
 	Handlers handlers = BuildHandlers();
 
@@ -208,24 +206,24 @@ bool Config::IsConfigValid() const {
 	if (activation_func_.size() != neuronal_layers_.size()) return false;
 	if (size_ == 0) return false;
 	if (std::any_of(neuronal_layers_.cbegin(), neuronal_layers_.cend(),
-					[](LayerSize layer_size) { return layer_size == 0; }))
+					[](int64_t layer_size) { return layer_size == 0; }))
 		return false;
 	return true;
 }
 
-EpochCount Config::GetEpochs() const {
+int64_t Config::GetEpochs() const {
 	return epochs_;
 }
 
-LearningRate Config::GetLearningRate() const {
+float Config::GetLearningRate() const {
 	return learning_rate_;
 }
 
-BatchSize Config::GetBatchSize() const {
+int64_t Config::GetBatchSize() const {
 	return batch_size_;
 }
 
-const std::vector<LayerSize>& Config::GetNeuralLayer() const {
+const std::vector<int64_t>& Config::GetNeuralLayer() const {
 	return neuronal_layers_;
 }
 
@@ -238,6 +236,6 @@ ALoss::LossFuncType Config::GetLossFunc() const {
 	return loss_func_;
 }
 
-LayerCount Config::GetSize() const {
+int64_t Config::GetSize() const {
 	return size_;
 }
