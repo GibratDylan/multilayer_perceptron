@@ -3,7 +3,7 @@
 #include "NeuronalLayer.hpp"
 #include "activation/AActivation.hpp"
 #include "loss/ALoss.hpp"
-#include "types/EigenTypes.hpp"
+#include "types/eigen_types.hpp"
 
 #include <cstdint>
 #include <memory>

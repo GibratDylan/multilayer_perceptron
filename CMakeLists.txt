@@ -57,6 +57,7 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/network/Network.hpp
 	${HEADERS_DIR}/config/Config.hpp
 	${HEADERS_DIR}/config/config_utils.hpp
+	${HEADERS_DIR}/types/eigen_types.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

@@ -7,7 +7,7 @@
 #include "network/Network.hpp"
 #include "trainer/metrics.hpp"
 #include "trainer/observer/TrainerObserverMetricsWriter.hpp"
-#include "types/EigenTypes.hpp"
+#include "types/eigen_types.hpp"
 
 #include <iostream>
 #include <string>
@@ -76,3 +76,4 @@ int main(int argc, const char** argv) {
 // Initialiser avec std::inisializer_list
 // Corriger erreur lint
 // Rajouter et verifier les assert
+// Deplacer NeuronalLayer

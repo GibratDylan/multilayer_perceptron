@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types/EigenTypes.hpp"
+#include "types/eigen_types.hpp"
 
 #include <ostream>
 #include <string_view>

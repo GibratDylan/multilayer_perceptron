@@ -1,6 +1,6 @@
 #include "network/Network.hpp"
 
-#include "types/EigenTypes.hpp"
+#include "types/eigen_types.hpp"
 
 #include <limits>
 #include <memory>
@@ -28,20 +28,22 @@ Network& Network::AddLayer(NeuronalLayer&& neuronal_layer,
 }
 
 float Network::ForwardPass(MatrixIn input_batch, IntVectorIn targets_batch) {
-    assert(size_ > 0);
-    assert(targets_batch.size() > 0 && input_batch.size() > 0);
-    assert(input_batch.cols() == targets_batch.rows());
+	assert(size_ > 0);
+	assert(targets_batch.size() > 0 && input_batch.size() > 0);
+	assert(input_batch.cols() == targets_batch.rows());
 
-    neuronal_layers_[0].Forward(input_batch);
-    activation_func_[0]->Forward(neuronal_layers_[0].GetOutputs());
+	neuronal_layers_[0].Forward(input_batch);
+	activation_func_[0]->Forward(neuronal_layers_[0].GetOutputs());
 
-    for (Eigen::Index index = 1; index < size_; ++index) {
-        neuronal_layers_[index].Forward(activation_func_[index - 1]->GetOutputs());
-        activation_func_[index]->Forward(neuronal_layers_[index].GetOutputs());
-    }
+	for (Eigen::Index index = 1; index < size_; ++index) {
+		neuronal_layers_[index].Forward(
+			activation_func_[index - 1]->GetOutputs());
+		activation_func_[index]->Forward(neuronal_layers_[index].GetOutputs());
+	}
 
-    loss_func_->Forward(activation_func_[size_ - 1]->GetOutputs(), targets_batch);
-    return loss_func_->GetLoss();
+	loss_func_->Forward(activation_func_[size_ - 1]->GetOutputs(),
+						targets_batch);
+	return loss_func_->GetLoss();
 }
 
 // DOIT ETRE IMPLEMENTER

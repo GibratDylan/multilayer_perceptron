@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types/EigenTypes.hpp"
+#include "types/eigen_types.hpp"
 
 #include <ostream>
 #include <string_view>
@@ -23,8 +23,7 @@ class ALoss {
    public:
 	virtual ~ALoss() = default;
 
-	virtual void Forward(MatrixIn logits_batch,
-						 IntVectorIn targets_batch) = 0;
+	virtual void Forward(MatrixIn logits_batch, IntVectorIn targets_batch) = 0;
 	virtual void Backward(IntVectorIn targets_batch) = 0;
 
 	VectorIn GetOutputs() const;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types/EigenTypes.hpp"
+#include "types/eigen_types.hpp"
 
 namespace metrics {
 float Accuracy(MatrixIn logits_batch, IntVectorIn targets_batch);

@@ -2,7 +2,7 @@
 
 #include "activation/ActivationSoftmax.hpp"
 #include "loss/LossCategoricalCrossEntropy.hpp"
-#include "types/EigenTypes.hpp"
+#include "types/eigen_types.hpp"
 
 #include <ostream>
 

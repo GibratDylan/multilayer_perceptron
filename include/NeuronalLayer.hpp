@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types/EigenTypes.hpp"
+#include "types/eigen_types.hpp"
 
 #include <ostream>
 
@@ -17,10 +17,6 @@ class NeuronalLayer {
 
    public:
 	explicit NeuronalLayer(int64_t input_size, int64_t num_neurons);
-	NeuronalLayer(const NeuronalLayer& other) = default;
-	NeuronalLayer& operator=(const NeuronalLayer& other) = default;
-	NeuronalLayer(NeuronalLayer&& other) = default;
-	NeuronalLayer& operator=(NeuronalLayer&& other) = default;
 
 	void Forward(MatrixIn input_batch);
 	void Backward(MatrixIn gradient_batch);
