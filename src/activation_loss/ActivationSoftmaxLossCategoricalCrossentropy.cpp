@@ -3,16 +3,16 @@
 #include <ostream>
 
 void ActivationSoftmaxLossCategoricalCrossentropy::Forward(
-	MatrixIn input_batch, IntVectorIn targets_batch) {
+	const MatrixIn& input_batch, const IntVectorIn& targets_batch) {
 	activation_.Forward(input_batch);
 	loss_.Forward(activation_.GetOutputs(), targets_batch);
 }
 
 void ActivationSoftmaxLossCategoricalCrossentropy::Backward(
-	IntVectorIn targets_batch) {
+	const IntVectorIn& targets_batch) {
 	inputs_gradient_ = outputs_;
 
-	const int64_t batch_size = targets_batch.size();
+	const int64_t batch_size{targets_batch.size()};
 
 	assert(inputs_gradient_.cols() == targets_batch.rows() &&
 		   targets_batch.maxCoeff() <= inputs_gradient_.rows());
@@ -41,8 +41,8 @@ float ActivationSoftmaxLossCategoricalCrossentropy::GetLoss() const {
 
 std::ostream& operator<<(
 	std::ostream& os, const ActivationSoftmaxLossCategoricalCrossentropy& rhs) {
-	const Eigen::IOFormat mat_fmt(4, 0, ", ", "\n", "    [", "]");
-	const Eigen::IOFormat vec_fmt(4, 0, ", ", "\n", "    [", "]");
+	const Eigen::IOFormat mat_fmt{4, 0, ", ", "\n", "    [", "]"};
+	const Eigen::IOFormat vec_fmt{4, 0, ", ", "\n", "    [", "]"};
 
 	os << "ActivationSoftmaxLossCategoricalCrossentropy\n";
 	os << "  outputs:\n" << rhs.outputs_.format(mat_fmt) << "\n";

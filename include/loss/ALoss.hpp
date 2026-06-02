@@ -6,13 +6,12 @@
 #include <string_view>
 
 namespace loss_func_string {
-inline constexpr std::string_view kCatCrossentropy =
-	"categorical_cross_entropy";
+inline constexpr std::string_view kCatCrossentropy{"categorical_cross_entropy"};
 }  // namespace loss_func_string
 
 class ALoss {
    public:
-	enum LossFuncType : uint8_t { kCatCrossentropy, kNone };
+	enum class LossFuncType : uint8_t { kCatCrossentropy, kNone };
 
    protected:
 	Vector outputs_;
@@ -23,7 +22,8 @@ class ALoss {
    public:
 	virtual ~ALoss() = default;
 
-	virtual void Forward(MatrixIn logits_batch, IntVectorIn targets_batch) = 0;
+	virtual void Forward(const MatrixIn& logits_batch,
+						 IntVectorIn targets_batch) = 0;
 	virtual void Backward(IntVectorIn targets_batch) = 0;
 
 	VectorIn GetOutputs() const;

@@ -1,7 +1,8 @@
 epochs 5
 learning_rate 0.001
 batch_size 8
-layer 784 4096 relu
-layer 4096 2048 relu
-layer 2048 10 softmax
+input_size 784
+layer 4096 relu
+layer 2048 relu
+layer 10 softmax
 loss categorical_cross_entropy

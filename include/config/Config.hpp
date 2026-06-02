@@ -18,6 +18,7 @@ class Config {
 
    private:
 	int64_t size_;
+	int64_t input_size_;
 	std::vector<int64_t> neuronal_layers_;
 	std::vector<AActivation::ActivationFuncType> activation_func_;
 	int64_t epochs_;
@@ -30,7 +31,8 @@ class Config {
 	bool seen_epochs_;
 	bool seen_learning_rate_;
 	bool seen_batch_size_;
-	bool seen_loss_;
+	bool seen_input_size_;
+	bool seen_loss_func_;
 
    public:
 	explicit Config(std::string_view path);
@@ -41,6 +43,7 @@ class Config {
 	const std::vector<AActivation::ActivationFuncType>& GetActivationFunc()
 		const;
 	int64_t GetSize() const;
+	int64_t GetInputSize() const;
 	int64_t GetEpochs() const;
 	int64_t GetBatchSize() const;
 	float GetLearningRate() const;
@@ -53,13 +56,16 @@ class Config {
 
 	bool ParseSingleValue(bool* seen, const Tokens& tokens, int64_t line_number,
 						  ParseSingle parse_and_set);
+						  
 	bool HandleEpochs(const Tokens& tokens, int64_t line_number);
 	bool HandleLearningRate(const Tokens& tokens, int64_t line_number);
 	bool HandleBatchSize(const Tokens& tokens, int64_t line_number);
-	bool HandleLoss(const Tokens& tokens, int64_t line_number);
+	bool HandleInputSize(const Tokens& tokens, int64_t line_number);
+	bool HandleLossFunc(const Tokens& tokens, int64_t line_number);
 	bool ParseEpochs(std::string_view token, int64_t line_number);
 	bool ParseLearningRate(std::string_view token, int64_t line_number);
-	bool ParseLoss(std::string_view token, int64_t line_number);
+	bool ParseInputSize(std::string_view token, int64_t line_number);
+	bool ParseLossFunc(std::string_view token, int64_t line_number);
 	bool ParseBatchSize(std::string_view token, int64_t line_number);
 	bool ParseLayer(const Tokens& tokens, int64_t line_number);
 

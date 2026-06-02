@@ -29,7 +29,7 @@ set(SRCS_DIR src)
 set(HEADERS_DIR include)
 add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/main.cpp
-	${SRCS_DIR}/NeuronalLayer.cpp
+	${SRCS_DIR}/layer/NeuronalLayer.cpp
 	${SRCS_DIR}/activation/AActivation.cpp
 	${SRCS_DIR}/activation/ActivationReLU.cpp
 	${SRCS_DIR}/activation/ActivationSoftmax.cpp
@@ -42,8 +42,10 @@ add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/network/Network.cpp
 	${SRCS_DIR}/config/Config.cpp
 	${SRCS_DIR}/config/config_utils.cpp
+	${SRCS_DIR}/data/Dataset.cpp
+	${SRCS_DIR}/data/csv_dataset.cpp
 
-	${HEADERS_DIR}/NeuronalLayer.hpp
+	${HEADERS_DIR}/layer/NeuronalLayer.hpp
 	${HEADERS_DIR}/activation/AActivation.hpp
 	${HEADERS_DIR}/activation/ActivationReLU.hpp
 	${HEADERS_DIR}/activation/ActivationSoftmax.hpp
@@ -58,6 +60,8 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/config/Config.hpp
 	${HEADERS_DIR}/config/config_utils.hpp
 	${HEADERS_DIR}/types/eigen_types.hpp
+	${HEADERS_DIR}/data/Dataset.hpp
+	${HEADERS_DIR}/data/csv_dataset.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

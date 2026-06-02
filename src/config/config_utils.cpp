@@ -22,8 +22,8 @@ std::string_view Trim(std::string_view value) {
 
 bool ParseSigned(std::string_view token, int64_t* out) {
 	if (token.empty() || out == nullptr) return false;
-	std::size_t pos = 0;
-	int64_t value = 0;
+	std::size_t pos{};
+	int64_t value{};
 	try {
 		value = std::stoi(std::string(token), &pos);
 	} catch (const std::invalid_argument&) {
@@ -39,8 +39,8 @@ bool ParseSigned(std::string_view token, int64_t* out) {
 
 bool ParseFloat(std::string_view token, float* out) {
 	if (token.empty() || out == nullptr) return false;
-	std::size_t pos = 0;
-	float value = 0.F;
+	std::size_t pos{};
+	float value{};
 	try {
 		value = std::stof(std::string(token), &pos);
 	} catch (const std::invalid_argument&) {
@@ -55,9 +55,9 @@ bool ParseFloat(std::string_view token, float* out) {
 }
 
 std::string_view StripInlineComment(std::string_view value) {
-	std::size_t hash_pos = value.find('#');
-	std::size_t slash_pos = value.find("//");
-	std::size_t cut_pos = std::string_view::npos;
+	std::size_t hash_pos{value.find('#')};
+	std::size_t slash_pos{value.find("//")};
+	std::size_t cut_pos{std::string_view::npos};
 	if (hash_pos != std::string_view::npos) cut_pos = hash_pos;
 	if (slash_pos != std::string_view::npos) {
 		cut_pos = (cut_pos == std::string_view::npos)
@@ -69,9 +69,9 @@ std::string_view StripInlineComment(std::string_view value) {
 }
 
 std::vector<std::string> SplitTokens(std::string_view value) {
-	std::istringstream iss(std::string{value});
-	std::vector<std::string> tokens;
-	std::string token;
+	std::istringstream iss{std::string{value}};
+	std::vector<std::string> tokens{};
+	std::string token{};
 	while (iss >> token) tokens.push_back(token);
 	return tokens;
 }

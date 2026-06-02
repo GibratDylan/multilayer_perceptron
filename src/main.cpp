@@ -1,12 +1,9 @@
-#include "NeuronalLayer.hpp"
+#include "layer/NeuronalLayer.hpp"
 #include "activation/ActivationReLU.hpp"
 #include "activation/ActivationSoftmax.hpp"
-#include "activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.hpp"
 #include "config/Config.hpp"
 #include "loss/LossCategoricalCrossEntropy.hpp"
 #include "network/Network.hpp"
-#include "trainer/metrics.hpp"
-#include "trainer/observer/TrainerObserverMetricsWriter.hpp"
 #include "types/eigen_types.hpp"
 
 #include <iostream>
@@ -23,22 +20,23 @@ int main(int argc, const char** argv) {
 
 	/// inputs = rows(input), batch = cols(batch)
 	Matrix inputs(config.GetNeuralLayer().front(), config.GetBatchSize());
-	for (int i = 0; i < inputs.rows(); ++i) {
-		for (int j = 0; j < inputs.cols(); ++j) inputs(i, j) = 0.5;
+	for (int64_t i{}; i < inputs.rows(); ++i) {
+		for (int64_t j{}; j < inputs.cols(); ++j) inputs(i, j) = 0.5F;
 	}
 
 	/// targets = rows(batch)
 	IntVector targets(config.GetBatchSize());
-	for (int i = 0; i < targets.rows(); ++i) targets(i) = 1;
+	for (int64_t i{}; i < targets.rows(); ++i) targets(i) = 1;
 
 	Network network{std::make_unique<LossCategoricalCrossEntropy>()};
 
-	for (int i = 0; i < config.GetSize() - 2; ++i)
+	int64_t i{};
+	for (; i < config.GetSize() - 1; ++i)
 		network.AddLayer(NeuronalLayer{config.GetNeuralLayer()[i],
 									   config.GetNeuralLayer()[i + 1]},
 						 std::make_unique<ActivationReLU>());
 
-	network.AddLayer(NeuronalLayer{64, 2},
+	network.AddLayer(NeuronalLayer{config.GetNeuralLayer()[i], config.GetNeuralLayer().back()},
 					 std::make_unique<ActivationSoftmax>());
 
 	std::cout << network.ForwardPass(inputs, targets) << '\n';
@@ -71,9 +69,10 @@ int main(int argc, const char** argv) {
 }
 
 // Chercher erreur optimisation
-// Optimise memory usage
-// Modifier layer config
-// Initialiser avec std::inisializer_list
-// Corriger erreur lint
+// Optimise memory usage (Ne plus stocker dans les backwardpass ? )
+// BackwardPass
+// Optimizer
+// dataset_csv
 // Rajouter et verifier les assert
-// Deplacer NeuronalLayer
+// Catch exception main et exception safety program
+// Release mode

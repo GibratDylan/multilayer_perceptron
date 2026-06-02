@@ -1,4 +1,4 @@
-#include "NeuronalLayer.hpp"
+#include "layer/NeuronalLayer.hpp"
 
 #include <ostream>
 
@@ -8,7 +8,7 @@ NeuronalLayer::NeuronalLayer(int64_t input_size, int64_t num_neurons)
 	biases_.setZero();
 }
 
-void NeuronalLayer::Forward(MatrixIn input_batch) {
+void NeuronalLayer::Forward(const MatrixIn& input_batch) {
 	assert(input_batch.rows() == weights_.cols() && input_batch.size() > 0);
 
 	inputs_ = input_batch;
@@ -22,7 +22,7 @@ void NeuronalLayer::Forward(MatrixIn input_batch) {
 		   weights_.rows() == outputs_.rows());
 }
 
-void NeuronalLayer::Backward(MatrixIn gradient_batch) {
+void NeuronalLayer::Backward(const MatrixIn& gradient_batch) {
 	weights_gradient_.noalias() = gradient_batch * inputs_.transpose();
 	biases_gradient_ = gradient_batch.rowwise().sum();
 	inputs_gradient_.noalias() = weights_.transpose() * gradient_batch;
@@ -45,8 +45,8 @@ MatrixIn NeuronalLayer::GetInputsGradient() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const NeuronalLayer& rhs) {
-	const Eigen::IOFormat mat_fmt(4, 0, ", ", "\n", "    [", "]");
-	const Eigen::IOFormat vec_fmt(4, 0, ", ", "\n", "    [", "]");
+	const Eigen::IOFormat mat_fmt{4, 0, ", ", "\n", "    [", "]"};
+	const Eigen::IOFormat vec_fmt{4, 0, ", ", "\n", "    [", "]"};
 
 	os << "Layer\n";
 	os << "  features: " << rhs.weights_.cols() << "\n";

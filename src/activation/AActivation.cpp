@@ -12,13 +12,14 @@ MatrixIn AActivation::GetInputsGradient() const {
 
 AActivation::ActivationFuncType AActivation::GetActivationType(
 	std::string_view str) {
-	if (str == activation_func_string::kRelu) return kRelu;
-	if (str == activation_func_string::kSoftmax) return kSoftmax;
-	return kNone;
+	if (str == activation_func_string::kRelu) return ActivationFuncType::kRelu;
+	if (str == activation_func_string::kSoftmax)
+		return ActivationFuncType::kSoftmax;
+	return ActivationFuncType::kNone;
 }
 
 std::ostream& operator<<(std::ostream& os, const AActivation& rhs) {
-	const Eigen::IOFormat mat_fmt(4, 0, ", ", "\n", "    [", "]");
+	const Eigen::IOFormat mat_fmt{4, 0, ", ", "\n", "    [", "]"};
 
 	os << "Activation\n";
 	os << "  outputs:\n" << rhs.GetOutputs().format(mat_fmt) << "\n";

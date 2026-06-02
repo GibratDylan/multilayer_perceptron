@@ -16,13 +16,14 @@ MatrixIn ALoss::GetInputsGradient() const {
 }
 
 ALoss::LossFuncType ALoss::GetLossType(std::string_view str) {
-	if (str == loss_func_string::kCatCrossentropy) return kCatCrossentropy;
-	return kNone;
+	if (str == loss_func_string::kCatCrossentropy)
+		return LossFuncType::kCatCrossentropy;
+	return LossFuncType::kNone;
 }
 
 std::ostream& operator<<(std::ostream& os, const ALoss& rhs) {
-	const Eigen::IOFormat mat_fmt(4, 0, ", ", "\n", "    [", "]");
-	const Eigen::IOFormat vec_fmt(4, 0, ", ", "\n", "    [", "]");
+	const Eigen::IOFormat mat_fmt{4, 0, ", ", "\n", "    [", "]"};
+	const Eigen::IOFormat vec_fmt{4, 0, ", ", "\n", "    [", "]"};
 	os << "Loss\n";
 	os << "  outputs:\n" << rhs.outputs_.transpose().format(vec_fmt);
 	os << "  inputs_gradient:\n"

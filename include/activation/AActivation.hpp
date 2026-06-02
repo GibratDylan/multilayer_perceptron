@@ -6,13 +6,13 @@
 #include <string_view>
 
 namespace activation_func_string {
-inline constexpr std::string_view kRelu = "relu";
-inline constexpr std::string_view kSoftmax = "softmax";
+inline constexpr std::string_view kRelu{"relu"};
+inline constexpr std::string_view kSoftmax{"softmax"};
 }  // namespace activation_func_string
 
 class AActivation {
    public:
-	enum ActivationFuncType : uint8_t { kRelu, kSoftmax, kNone };
+	enum class ActivationFuncType : uint8_t { kRelu, kSoftmax, kNone };
 
    protected:
 	Matrix outputs_;
@@ -23,8 +23,8 @@ class AActivation {
    public:
 	virtual ~AActivation() = default;
 
-	virtual void Forward(MatrixIn input_batch) = 0;
-	virtual void Backward(MatrixIn gradient_batch) = 0;
+	virtual void Forward(const MatrixIn& input_batch) = 0;
+	virtual void Backward(const MatrixIn& gradient_batch) = 0;
 
 	MatrixIn GetOutputs() const;
 	MatrixIn GetInputsGradient() const;

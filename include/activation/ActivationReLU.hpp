@@ -4,6 +4,6 @@
 
 class ActivationReLU : public AActivation {
    public:
-	void Forward(MatrixIn input_batch) override;
-	void Backward(MatrixIn gradient_batch) override;
+	void Forward(const MatrixIn& input_batch) override;
+	void Backward(const MatrixIn& gradient_batch) override;
 };

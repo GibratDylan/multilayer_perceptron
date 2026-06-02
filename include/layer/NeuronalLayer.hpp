@@ -18,8 +18,8 @@ class NeuronalLayer {
    public:
 	explicit NeuronalLayer(int64_t input_size, int64_t num_neurons);
 
-	void Forward(MatrixIn input_batch);
-	void Backward(MatrixIn gradient_batch);
+	void Forward(const MatrixIn& input_batch);
+	void Backward(const MatrixIn& gradient_batch);
 	int64_t GetInputSize() const;
 	int64_t GetNumNeurons() const;
 	MatrixIn GetOutputs() const;

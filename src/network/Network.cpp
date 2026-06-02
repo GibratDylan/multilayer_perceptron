@@ -1,4 +1,5 @@
 #include "network/Network.hpp"
+#include "layer/NeuronalLayer.hpp"
 
 #include "types/eigen_types.hpp"
 
@@ -6,7 +7,7 @@
 #include <memory>
 
 Network::Network(std::unique_ptr<ALoss> loss_func)
-	: loss_func_(std::move(loss_func)) {}
+	: loss_func_(std::move(loss_func)), size_{} {}
 
 Network& Network::AddLayer(NeuronalLayer&& neuronal_layer,
 						   std::unique_ptr<AActivation>&& activation_func) {
@@ -16,7 +17,7 @@ Network& Network::AddLayer(NeuronalLayer&& neuronal_layer,
 	assert(neuronal_layer.GetNumNeurons() > 0);
 
 	if (!neuronal_layers_.empty()) {
-		const NeuronalLayer& previous_layer = neuronal_layers_.back();
+		const NeuronalLayer& previous_layer{neuronal_layers_.back()};
 		assert(previous_layer.GetNumNeurons() == neuronal_layer.GetInputSize());
 	}
 
@@ -27,7 +28,8 @@ Network& Network::AddLayer(NeuronalLayer&& neuronal_layer,
 	return *this;
 }
 
-float Network::ForwardPass(MatrixIn input_batch, IntVectorIn targets_batch) {
+float Network::ForwardPass(const MatrixIn& input_batch,
+						   const IntVectorIn& targets_batch) {
 	assert(size_ > 0);
 	assert(targets_batch.size() > 0 && input_batch.size() > 0);
 	assert(input_batch.cols() == targets_batch.rows());
@@ -35,7 +37,7 @@ float Network::ForwardPass(MatrixIn input_batch, IntVectorIn targets_batch) {
 	neuronal_layers_[0].Forward(input_batch);
 	activation_func_[0]->Forward(neuronal_layers_[0].GetOutputs());
 
-	for (Eigen::Index index = 1; index < size_; ++index) {
+	for (Eigen::Index index{1}; index < size_; ++index) {
 		neuronal_layers_[index].Forward(
 			activation_func_[index - 1]->GetOutputs());
 		activation_func_[index]->Forward(neuronal_layers_[index].GetOutputs());
@@ -47,7 +49,7 @@ float Network::ForwardPass(MatrixIn input_batch, IntVectorIn targets_batch) {
 }
 
 // DOIT ETRE IMPLEMENTER
-void Network::BackwardPass(MatrixIn input_batch) {
+void Network::BackwardPass(const MatrixIn& input_batch) {
 	(void)input_batch;
 }
 

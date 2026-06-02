@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NeuronalLayer.hpp"
+#include "layer/NeuronalLayer.hpp"
 #include "activation/AActivation.hpp"
 #include "loss/ALoss.hpp"
 #include "types/eigen_types.hpp"
@@ -15,7 +15,7 @@ class Network {
 	std::vector<std::unique_ptr<AActivation>> activation_func_;
 	std::unique_ptr<ALoss> loss_func_;
 
-	int64_t size_{};
+	int64_t size_;
 
    public:
 	explicit Network(std::unique_ptr<ALoss> loss_func);
@@ -23,8 +23,9 @@ class Network {
 	Network& AddLayer(NeuronalLayer&& neuronal_layer,
 					  std::unique_ptr<AActivation>&& activation_func);
 
-	float ForwardPass(MatrixIn input_batch, IntVectorIn targets_batch);
-	void BackwardPass(MatrixIn input_batch);
+	float ForwardPass(const MatrixIn& input_batch,
+					  const IntVectorIn& targets_batch);
+	void BackwardPass(const MatrixIn& input_batch);
 
 	const NeuronalLayer& GetNeuronalLayer() const;
 	const AActivation& GetActivationLayer() const;
