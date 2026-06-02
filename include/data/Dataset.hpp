@@ -11,11 +11,10 @@ class Dataset {
 	class BatchIterator {
 	   private:
 		int64_t pos_;
-	   int64_t batch_size_;
+		int64_t batch_size_;
 
 	   public:
-		explicit BatchIterator(int64_t pos)
-			: pos_{pos} {
+		explicit BatchIterator(int64_t pos) : pos_{pos} {
 			// std::iota(indices_.begin(), indices_.end(), 0);
 			// std::random_device random;
 			// std::mt19937 generator(random());
@@ -31,13 +30,13 @@ class Dataset {
 		}
 
 		bool operator!=(const BatchIterator& rhs) const {
-         return rhs.pos_ != pos_;
-      }
+			return rhs.pos_ != pos_;
+		}
 	};
 
    private:
 	const Matrix dataset_;
-   std::vector<int64_t> indices_;
+	std::vector<int64_t> indices_;
 	int64_t batch_size_;
 
    public:

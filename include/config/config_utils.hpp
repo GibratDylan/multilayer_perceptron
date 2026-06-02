@@ -1,8 +1,8 @@
 #pragma once
 
+#include <cstdint>
 #include <string_view>
 #include <vector>
-#include <cstdint>
 
 namespace config_utils {
 std::string_view Trim(std::string_view value);

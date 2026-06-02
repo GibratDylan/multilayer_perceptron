@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ITrainerObserver.hpp"
+
 #include <cstdint>
 
 class TrainerObserverMetricsWriter : public ITrainerObserver {

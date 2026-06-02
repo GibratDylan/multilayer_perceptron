@@ -1,8 +1,8 @@
 #include "trainer/observer/TrainerObserverMetricsWriter.hpp"
 
+#include <cstdint>
 #include <fstream>
 #include <iostream>
-#include <cstdint>
 
 // Rajouter d'autres metrics (Loss, learning rate, etc..) et les prints dans le
 // terminal
