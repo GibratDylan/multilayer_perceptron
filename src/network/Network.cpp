@@ -1,6 +1,6 @@
 #include "network/Network.hpp"
-#include "layer/NeuronalLayer.hpp"
 
+#include "layer/NeuronalLayer.hpp"
 #include "types/eigen_types.hpp"
 
 #include <limits>
@@ -34,8 +34,8 @@ float Network::ForwardPass(const MatrixIn& input_batch,
 	assert(targets_batch.size() > 0 && input_batch.size() > 0);
 	assert(input_batch.cols() == targets_batch.rows());
 
-	neuronal_layers_[0].Forward(input_batch);
-	activation_func_[0]->Forward(neuronal_layers_[0].GetOutputs());
+	neuronal_layers_.front().Forward(input_batch);
+	activation_func_.front()->Forward(neuronal_layers_.front().GetOutputs());
 
 	for (Eigen::Index index{1}; index < size_; ++index) {
 		neuronal_layers_[index].Forward(
@@ -43,14 +43,29 @@ float Network::ForwardPass(const MatrixIn& input_batch,
 		activation_func_[index]->Forward(neuronal_layers_[index].GetOutputs());
 	}
 
-	loss_func_->Forward(activation_func_[size_ - 1]->GetOutputs(),
-						targets_batch);
+	loss_func_->Forward(activation_func_.back()->GetOutputs(), targets_batch);
 	return loss_func_->GetLoss();
 }
 
-// DOIT ETRE IMPLEMENTER
-void Network::BackwardPass(const MatrixIn& input_batch) {
-	(void)input_batch;
+void Network::BackwardPass(const IntVectorIn& targets_batch) {
+	assert(size_ > 0);
+	assert(targets_batch.size() > 0);
+
+	loss_func_->Backward(targets_batch);
+
+	activation_func_.back()->Backward(loss_func_->GetInputsGradient());
+
+	for (Eigen::Index index{size_ - 1}; index > 0; --index) {
+		neuronal_layers_[index].Backward(
+			activation_func_[index]->GetInputsGradient());
+		activation_func_[index - 1]->Backward(
+			neuronal_layers_[index].GetInputsGradient());
+	}
+
+	neuronal_layers_.front().Backward(
+		activation_func_.front()->GetInputsGradient());
+
+	assert(neuronal_layers_.front().GetInputsGradient().size() > 0);
 }
 
 void Network::AddNeuronalLayer(NeuronalLayer&& neuronal_layer) {
@@ -63,4 +78,17 @@ void Network::AddActivationLayer(
 	std::unique_ptr<AActivation>&& activation_func) {
 	assert(activation_func != nullptr);
 	activation_func_.push_back(std::move(activation_func));
+}
+
+const std::vector<NeuronalLayer>& Network::GetNeuronalLayers() const {
+	return neuronal_layers_;
+}
+
+const std::vector<std::unique_ptr<AActivation>>& Network::GetActivationLayers()
+	const {
+	return activation_func_;
+}
+
+const ALoss& Network::GetLossFunc() const {
+	return *loss_func_;
 }

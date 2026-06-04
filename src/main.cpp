@@ -1,9 +1,6 @@
-#include "layer/NeuronalLayer.hpp"
-#include "activation/ActivationReLU.hpp"
-#include "activation/ActivationSoftmax.hpp"
 #include "config/Config.hpp"
-#include "loss/LossCategoricalCrossEntropy.hpp"
 #include "network/Network.hpp"
+#include "network/NetworkBuilder.hpp"
 #include "types/eigen_types.hpp"
 
 #include <iostream>
@@ -21,25 +18,22 @@ int main(int argc, const char** argv) {
 	/// inputs = rows(input), batch = cols(batch)
 	Matrix inputs(config.GetNeuralLayer().front(), config.GetBatchSize());
 	for (int64_t i{}; i < inputs.rows(); ++i) {
-		for (int64_t j{}; j < inputs.cols(); ++j) inputs(i, j) = 0.5F;
+		for (int64_t j{}; j < inputs.cols(); ++j) {
+			inputs(i, j) = 0.5F;
+		}
 	}
 
 	/// targets = rows(batch)
 	IntVector targets(config.GetBatchSize());
 	for (int64_t i{}; i < targets.rows(); ++i) targets(i) = 1;
 
-	Network network{std::make_unique<LossCategoricalCrossEntropy>()};
+	NetworkBuilder network_builder{config};
 
-	int64_t i{};
-	for (; i < config.GetSize() - 1; ++i)
-		network.AddLayer(NeuronalLayer{config.GetNeuralLayer()[i],
-									   config.GetNeuralLayer()[i + 1]},
-						 std::make_unique<ActivationReLU>());
-
-	network.AddLayer(NeuronalLayer{config.GetNeuralLayer()[i], config.GetNeuralLayer().back()},
-					 std::make_unique<ActivationSoftmax>());
+	Network network{network_builder.Build()};
 
 	std::cout << network.ForwardPass(inputs, targets) << '\n';
+	network.BackwardPass(targets);
+	std::cout << network.GetNeuronalLayers().front() << '\n';
 
 	// Layer dense_1{2, 10};
 	// ActivationReLU activation_1{};

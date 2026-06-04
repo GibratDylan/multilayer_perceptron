@@ -3,10 +3,10 @@ learning_rate 0.01
 batch_size 678
 input_size 2
 layer 64 relu
-layer 2048 relu
-layer 2048 relu
-layer 2048 relu
-layer 2048 relu
+# layer 2048 relu
+# layer 2048 relu
+# layer 2048 relu
+# layer 2048 relu
 # layer 4096 relu
 # layer 4096 relu
 # layer 4096 relu

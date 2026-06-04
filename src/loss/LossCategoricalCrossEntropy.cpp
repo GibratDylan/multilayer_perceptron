@@ -32,6 +32,7 @@ void LossCategoricalCrossEntropy::Backward(IntVectorIn targets_batch) {
 	assert(inputs_.size() > 0 && targets_batch.size() > 0);
 
 	inputs_gradient_.resizeLike(inputs_);
+	inputs_gradient_.setZero();
 	for (int64_t i{}; i < inputs_.cols(); ++i) {
 		int64_t label{targets_batch(i)};
 		float predictive_input{

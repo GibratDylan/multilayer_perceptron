@@ -49,10 +49,11 @@ class Config {
 	float GetLearningRate() const;
 	ALoss::LossFuncType GetLossFunc() const;
 
+	bool IsConfigValid() const;
+	
    private:
 	void Reset();
 	bool ParseLines(std::ifstream& file);
-	bool IsConfigValid() const;
 
 	bool ParseSingleValue(bool* seen, const Tokens& tokens, int64_t line_number,
 						  ParseSingle parse_and_set);

@@ -25,11 +25,11 @@ class Network {
 
 	float ForwardPass(const MatrixIn& input_batch,
 					  const IntVectorIn& targets_batch);
-	void BackwardPass(const MatrixIn& input_batch);
+	void BackwardPass(const IntVectorIn& targets_batch);
 
-	const NeuronalLayer& GetNeuronalLayer() const;
-	const AActivation& GetActivationLayer() const;
-	const ALoss& GetLossLayer() const;
+	const std::vector<NeuronalLayer>& GetNeuronalLayers() const;
+	const std::vector<std::unique_ptr<AActivation>>& GetActivationLayers() const;
+	const ALoss& GetLossFunc() const;
 
    private:
 	void AddNeuronalLayer(NeuronalLayer&& neuronal_layer);

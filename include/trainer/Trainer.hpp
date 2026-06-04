@@ -9,5 +9,7 @@ class Trainer {
 	std::vector<const ITrainerObserver*> observers_;
 
    public:
+   
+
 	void AddObserver(const ITrainerObserver* observer);
 };

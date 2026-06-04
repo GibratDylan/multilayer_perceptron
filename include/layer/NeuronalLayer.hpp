@@ -20,10 +20,13 @@ class NeuronalLayer {
 
 	void Forward(const MatrixIn& input_batch);
 	void Backward(const MatrixIn& gradient_batch);
+	
 	int64_t GetInputSize() const;
 	int64_t GetNumNeurons() const;
 	MatrixIn GetOutputs() const;
 	MatrixIn GetInputsGradient() const;
+	MatrixIn GetWeightsGradient() const;
+	MatrixIn GetBiasesGradient() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const NeuronalLayer& rhs);
 };

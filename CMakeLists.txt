@@ -40,6 +40,7 @@ add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/trainer/metrics.cpp
 	${SRCS_DIR}/trainer/observer/TrainerObserverMetricsWriter.cpp
 	${SRCS_DIR}/network/Network.cpp
+	${SRCS_DIR}/network/NetworkBuilder.cpp
 	${SRCS_DIR}/config/Config.cpp
 	${SRCS_DIR}/config/config_utils.cpp
 	${SRCS_DIR}/data/Dataset.cpp
@@ -57,6 +58,7 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsWriter.hpp
 	${HEADERS_DIR}/trainer/observer/ITrainerObserver.hpp
 	${HEADERS_DIR}/network/Network.hpp
+	${HEADERS_DIR}/network/NetworkBuilder.hpp
 	${HEADERS_DIR}/config/Config.hpp
 	${HEADERS_DIR}/config/config_utils.hpp
 	${HEADERS_DIR}/types/eigen_types.hpp

@@ -23,9 +23,19 @@ void NeuronalLayer::Forward(const MatrixIn& input_batch) {
 }
 
 void NeuronalLayer::Backward(const MatrixIn& gradient_batch) {
+	assert(gradient_batch.rows() == weights_.rows() &&
+		   gradient_batch.size() > 0);
+	assert(inputs_.size() > 0 && gradient_batch.cols() == inputs_.cols());
+
 	weights_gradient_.noalias() = gradient_batch * inputs_.transpose();
 	biases_gradient_ = gradient_batch.rowwise().sum();
+
+	assert(biases_gradient_.rows() == gradient_batch.rows());
+
 	inputs_gradient_.noalias() = weights_.transpose() * gradient_batch;
+
+	assert(gradient_batch.cols() == inputs_gradient_.cols() &&
+		   weights_.cols() == inputs_gradient_.rows());
 }
 
 int64_t NeuronalLayer::GetInputSize() const {
@@ -34,6 +44,14 @@ int64_t NeuronalLayer::GetInputSize() const {
 
 int64_t NeuronalLayer::GetNumNeurons() const {
 	return weights_.rows();
+}
+
+MatrixIn NeuronalLayer::GetWeightsGradient() const {
+	return weights_gradient_;
+}
+
+MatrixIn NeuronalLayer::GetBiasesGradient() const {
+	return biases_gradient_;
 }
 
 MatrixIn NeuronalLayer::GetOutputs() const {
