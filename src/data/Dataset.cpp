@@ -8,8 +8,10 @@
 
 #include <Eigen/Dense>
 
-Dataset::Dataset(const Matrix&& dataset, int64_t batch_size)
-	: dataset_{dataset}, indices_(dataset.cols()), batch_size_{batch_size} {
+Dataset::Dataset(Matrix&& dataset, int64_t batch_size)
+	: dataset_{std::move(dataset)},
+	  indices_(dataset.cols()),
+	  batch_size_{batch_size} {
 	assert(batch_size_ > 0);
 	assert(dataset_.rows() > 0);
 	assert(dataset_.cols() > 0);
@@ -18,21 +20,21 @@ Dataset::Dataset(const Matrix&& dataset, int64_t batch_size)
 	RandDataset();
 }
 
-Dataset::ConstBatchIterator Dataset::cbegin() const {
+Dataset::ConstBatchIterator Dataset::cbegin() const noexcept {
 	return Dataset::ConstBatchIterator{0, this};
 }
 
-Dataset::ConstBatchIterator Dataset::cend() const {
+Dataset::ConstBatchIterator Dataset::cend() const noexcept {
 	assert(indices_.size() < std::numeric_limits<int64_t>::max());
 	return Dataset::ConstBatchIterator{static_cast<int64_t>(indices_.size()),
 									   this};
 }
 
-Dataset::ConstBatchIterator Dataset::begin() const {
+Dataset::ConstBatchIterator Dataset::begin() const noexcept {
 	return cbegin();
 }
 
-Dataset::ConstBatchIterator Dataset::end() const {
+Dataset::ConstBatchIterator Dataset::end() const noexcept {
 	return cend();
 }
 

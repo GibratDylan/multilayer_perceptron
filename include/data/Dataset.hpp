@@ -10,11 +10,12 @@ class Dataset {
    public:
 	class ConstBatchIterator {
 	   private:
-		int64_t pos_;
-		const Dataset* parent_ptr_;
+		int64_t pos_{};
+		const Dataset* parent_ptr_{};
 
 	   public:
-		explicit ConstBatchIterator(int64_t pos, const Dataset* parent_ptr)
+		explicit ConstBatchIterator(int64_t pos,
+									const Dataset* parent_ptr) noexcept
 			: pos_{pos}, parent_ptr_{parent_ptr} {}
 
 		Matrix operator*() const {
@@ -37,30 +38,30 @@ class Dataset {
 			return batch;
 		}
 
-		const ConstBatchIterator& operator++() {
+		const ConstBatchIterator& operator++() noexcept {
 			pos_ = std::min(pos_ + parent_ptr_->batch_size_,
 							static_cast<int64_t>(parent_ptr_->indices_.size()));
 			return *this;
 		}
 
-		bool operator!=(const ConstBatchIterator& rhs) const {
+		bool operator!=(const ConstBatchIterator& rhs) const noexcept {
 			return rhs.pos_ != pos_;
 		}
 	};
 
    private:
-	const Matrix dataset_;
-	std::vector<int64_t> indices_;
-	int64_t batch_size_;
+	const Matrix dataset_{};
+	std::vector<int64_t> indices_{};
+	int64_t batch_size_{};
 
    public:
-	explicit Dataset(const Matrix&& dataset, int64_t batch_size);
+	explicit Dataset(Matrix&& dataset, int64_t batch_size);
 
 	// NOLINTBEGIN(readability-identifier-naming*)
-	ConstBatchIterator cbegin() const;
-	ConstBatchIterator cend() const;
-	ConstBatchIterator begin() const;
-	ConstBatchIterator end() const;
+	ConstBatchIterator cbegin() const noexcept;
+	ConstBatchIterator cend() const noexcept;
+	ConstBatchIterator begin() const noexcept;
+	ConstBatchIterator end() const noexcept;
 	// NOLINTEND(readability-identifier-naming*)
 
 	void RandDataset();

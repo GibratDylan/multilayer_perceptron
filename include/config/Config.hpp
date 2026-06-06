@@ -17,47 +17,47 @@ class Config {
 	using ParseSingle = bool (Config::*)(std::string_view, int64_t);
 
    private:
-	int64_t size_;
-	int64_t input_size_;
-	std::vector<int64_t> neuronal_layers_;
-	std::vector<AActivation::ActivationFuncType> activation_func_;
-	int64_t epochs_;
-	int64_t batch_size_;
-	float learning_rate_;
-	ALoss::LossFuncType loss_func_;
+	int64_t size_{};
+	int64_t input_size_{};
+	std::vector<int64_t> neuronal_layers_{};
+	std::vector<AActivation::ActivationFuncType> activation_func_{};
+	int64_t epochs_{};
+	int64_t batch_size_{};
+	float learning_rate_{};
+	ALoss::LossFuncType loss_func_{};
 
-	std::string path_;
+	std::string path_{};
 
-	bool seen_epochs_;
-	bool seen_learning_rate_;
-	bool seen_batch_size_;
-	bool seen_input_size_;
-	bool seen_loss_func_;
+	bool seen_epochs_{};
+	bool seen_learning_rate_{};
+	bool seen_batch_size_{};
+	bool seen_input_size_{};
+	bool seen_loss_func_{};
 
    public:
 	explicit Config(std::string_view path);
 
 	bool Parse();
 
-	const std::vector<int64_t>& GetNeuralLayer() const;
+	const std::vector<int64_t>& GetNeuralLayer() const noexcept;
 	const std::vector<AActivation::ActivationFuncType>& GetActivationFunc()
-		const;
-	int64_t GetSize() const;
-	int64_t GetInputSize() const;
-	int64_t GetEpochs() const;
-	int64_t GetBatchSize() const;
-	float GetLearningRate() const;
-	ALoss::LossFuncType GetLossFunc() const;
+		const noexcept;
+	int64_t GetSize() const noexcept;
+	int64_t GetInputSize() const noexcept;
+	int64_t GetEpochs() const noexcept;
+	int64_t GetBatchSize() const noexcept;
+	float GetLearningRate() const noexcept;
+	ALoss::LossFuncType GetLossFunc() const noexcept;
 
-	bool IsConfigValid() const;
-	
+	bool IsConfigValid() const noexcept;
+
    private:
 	void Reset();
 	bool ParseLines(std::ifstream& file);
 
 	bool ParseSingleValue(bool* seen, const Tokens& tokens, int64_t line_number,
 						  ParseSingle parse_and_set);
-						  
+
 	bool HandleEpochs(const Tokens& tokens, int64_t line_number);
 	bool HandleLearningRate(const Tokens& tokens, int64_t line_number);
 	bool HandleBatchSize(const Tokens& tokens, int64_t line_number);

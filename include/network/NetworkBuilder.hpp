@@ -7,10 +7,10 @@
 
 class NetworkBuilder {
    private:
-	const Config& config_;
+	const Config config_;
 
    public:
-	explicit NetworkBuilder(const Config& config);
+	explicit NetworkBuilder(Config config);
 
 	Network Build() const;
 

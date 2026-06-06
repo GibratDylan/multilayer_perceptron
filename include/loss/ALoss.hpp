@@ -14,23 +14,30 @@ class ALoss {
 	enum class LossFuncType : uint8_t { kCatCrossentropy, kNone };
 
    protected:
-	Vector outputs_;
-	Matrix inputs_;
+	Vector outputs_{};
+	Matrix inputs_{};
 
-	Matrix inputs_gradient_;
+	Matrix inputs_gradient_{};
 
    public:
+	ALoss(const ALoss&) = delete;
+	ALoss(ALoss&&) noexcept = delete;
+	ALoss& operator=(const ALoss&) = delete;
+	ALoss& operator=(ALoss&&) noexcept = delete;
 	virtual ~ALoss() = default;
 
 	virtual void Forward(const MatrixIn& logits_batch,
 						 IntVectorIn targets_batch) = 0;
 	virtual void Backward(IntVectorIn targets_batch) = 0;
 
-	VectorIn GetOutputs() const;
-	MatrixIn GetInputsGradient() const;
-	float GetLoss() const;
+	VectorIn GetOutputs() const noexcept;
+	MatrixIn GetInputsGradient() const noexcept;
+	float GetLoss() const noexcept;
 
 	static ALoss::LossFuncType GetLossType(std::string_view str);
 
 	friend std::ostream& operator<<(std::ostream& os, const ALoss& rhs);
+
+   protected:
+	ALoss() = default;
 };

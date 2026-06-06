@@ -8,8 +8,9 @@
 
 #include <limits>
 #include <memory>
+#include <stdexcept>
 
-NetworkBuilder::NetworkBuilder(const Config& config) : config_{config} {}
+NetworkBuilder::NetworkBuilder(Config config) : config_{std::move(config)} {}
 
 Network NetworkBuilder::Build() const {
 	assert(config_.IsConfigValid());
@@ -38,13 +39,12 @@ std::unique_ptr<ALoss> NetworkBuilder::GetLossFuncObj() const {
 			return std::make_unique<LossCategoricalCrossEntropy>();
 		default:
 			assert(false);
-			return nullptr;
+			throw std::runtime_error("Loss function not valid");
 	}
 }
 
 std::unique_ptr<AActivation> NetworkBuilder::GetActivationFuncObj(
 	int64_t index) const {
-
 	assert(index >= 0);
 	assert(config_.GetActivationFunc().size() <
 			   std::numeric_limits<int64_t>::max() &&
@@ -57,6 +57,6 @@ std::unique_ptr<AActivation> NetworkBuilder::GetActivationFuncObj(
 			return std::make_unique<ActivationSoftmax>();
 		default:
 			assert(false);
-			return nullptr;
+			throw std::runtime_error("Activation function not valid");
 	}
 }

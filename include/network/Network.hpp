@@ -11,14 +11,14 @@
 
 class Network {
    private:
-	std::vector<NeuronalLayer> neuronal_layers_;
-	std::vector<std::unique_ptr<AActivation>> activation_func_;
-	std::unique_ptr<ALoss> loss_func_;
+	std::vector<NeuronalLayer> neuronal_layers_{};
+	std::vector<std::unique_ptr<AActivation>> activation_func_{};
+	std::unique_ptr<ALoss> loss_func_{};
 
-	int64_t size_;
+	int64_t size_{};
 
    public:
-	explicit Network(std::unique_ptr<ALoss> loss_func);
+	explicit Network(std::unique_ptr<ALoss>&& loss_func);
 
 	Network& AddLayer(NeuronalLayer&& neuronal_layer,
 					  std::unique_ptr<AActivation>&& activation_func);
@@ -27,9 +27,9 @@ class Network {
 					  const IntVectorIn& targets_batch);
 	void BackwardPass(const IntVectorIn& targets_batch);
 
-	const std::vector<NeuronalLayer>& GetNeuronalLayers() const;
-	const std::vector<std::unique_ptr<AActivation>>& GetActivationLayers() const;
-	const ALoss& GetLossFunc() const;
+	const std::vector<NeuronalLayer>& GetNeuronalLayers() const noexcept;
+	const std::vector<std::unique_ptr<AActivation>>& GetActivationLayers() const noexcept;
+	const ALoss& GetLossFunc() const noexcept;
 
    private:
 	void AddNeuronalLayer(NeuronalLayer&& neuronal_layer);

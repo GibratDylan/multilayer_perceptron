@@ -2,16 +2,16 @@
 
 #include <ostream>
 
-float ALoss::GetLoss() const {
+float ALoss::GetLoss() const noexcept {
 	assert(outputs_.size() > 0);
 	return outputs_.mean();
 }
 
-VectorIn ALoss::GetOutputs() const {
+VectorIn ALoss::GetOutputs() const noexcept {
 	return outputs_;
 }
 
-MatrixIn ALoss::GetInputsGradient() const {
+MatrixIn ALoss::GetInputsGradient() const noexcept {
 	return inputs_gradient_;
 }
 

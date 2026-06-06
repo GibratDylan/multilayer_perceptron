@@ -6,7 +6,7 @@
 #include <limits>
 #include <memory>
 
-Network::Network(std::unique_ptr<ALoss> loss_func)
+Network::Network(std::unique_ptr<ALoss>&& loss_func)
 	: loss_func_(std::move(loss_func)), size_{} {}
 
 Network& Network::AddLayer(NeuronalLayer&& neuronal_layer,
@@ -80,15 +80,15 @@ void Network::AddActivationLayer(
 	activation_func_.push_back(std::move(activation_func));
 }
 
-const std::vector<NeuronalLayer>& Network::GetNeuronalLayers() const {
+const std::vector<NeuronalLayer>& Network::GetNeuronalLayers() const noexcept {
 	return neuronal_layers_;
 }
 
 const std::vector<std::unique_ptr<AActivation>>& Network::GetActivationLayers()
-	const {
+	const noexcept {
 	return activation_func_;
 }
 
-const ALoss& Network::GetLossFunc() const {
+const ALoss& Network::GetLossFunc() const noexcept {
 	return *loss_func_;
 }

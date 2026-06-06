@@ -2,11 +2,11 @@
 
 #include <ostream>
 
-MatrixIn AActivation::GetOutputs() const {
+MatrixIn AActivation::GetOutputs() const noexcept {
 	return outputs_;
 }
 
-MatrixIn AActivation::GetInputsGradient() const {
+MatrixIn AActivation::GetInputsGradient() const noexcept {
 	return inputs_gradient_;
 }
 

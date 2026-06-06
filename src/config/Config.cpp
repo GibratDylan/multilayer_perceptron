@@ -222,7 +222,7 @@ bool Config::IsActivationFuncValid(std::string_view string) {
 		   AActivation::ActivationFuncType::kNone;
 }
 
-bool Config::IsConfigValid() const {
+bool Config::IsConfigValid() const noexcept {
 	if (epochs_ <= 0 || !seen_epochs_) return false;
 	if (batch_size_ <= 0 || !seen_batch_size_) return false;
 	if (input_size_ <= 0 || !seen_input_size_) return false;
@@ -242,35 +242,35 @@ bool Config::IsConfigValid() const {
 	return true;
 }
 
-int64_t Config::GetEpochs() const {
+int64_t Config::GetEpochs() const noexcept {
 	return epochs_;
 }
 
-float Config::GetLearningRate() const {
+float Config::GetLearningRate() const noexcept {
 	return learning_rate_;
 }
 
-int64_t Config::GetBatchSize() const {
+int64_t Config::GetBatchSize() const noexcept {
 	return batch_size_;
 }
 
-int64_t Config::GetInputSize() const {
+int64_t Config::GetInputSize() const noexcept {
 	return input_size_;
 }
 
-const std::vector<int64_t>& Config::GetNeuralLayer() const {
+const std::vector<int64_t>& Config::GetNeuralLayer() const noexcept {
 	return neuronal_layers_;
 }
 
 const std::vector<AActivation::ActivationFuncType>& Config::GetActivationFunc()
-	const {
+	const noexcept {
 	return activation_func_;
 }
 
-ALoss::LossFuncType Config::GetLossFunc() const {
+ALoss::LossFuncType Config::GetLossFunc() const noexcept {
 	return loss_func_;
 }
 
-int64_t Config::GetSize() const {
+int64_t Config::GetSize() const noexcept {
 	return size_;
 }

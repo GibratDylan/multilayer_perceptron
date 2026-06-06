@@ -3,8 +3,7 @@
 #include <ostream>
 
 NeuronalLayer::NeuronalLayer(int64_t input_size, int64_t num_neurons)
-	: weights_{Matrix::Random(num_neurons, input_size)}, biases_(num_neurons) {
-	weights_ *= 0.1F;
+	: weights_{Matrix::Random(num_neurons, input_size) * 0.1F}, biases_(num_neurons) {
 	biases_.setZero();
 }
 
@@ -38,27 +37,27 @@ void NeuronalLayer::Backward(const MatrixIn& gradient_batch) {
 		   weights_.cols() == inputs_gradient_.rows());
 }
 
-int64_t NeuronalLayer::GetInputSize() const {
+int64_t NeuronalLayer::GetInputSize() const noexcept {
 	return weights_.cols();
 }
 
-int64_t NeuronalLayer::GetNumNeurons() const {
+int64_t NeuronalLayer::GetNumNeurons() const noexcept {
 	return weights_.rows();
 }
 
-MatrixIn NeuronalLayer::GetWeightsGradient() const {
+MatrixIn NeuronalLayer::GetWeightsGradient() const noexcept {
 	return weights_gradient_;
 }
 
-MatrixIn NeuronalLayer::GetBiasesGradient() const {
+MatrixIn NeuronalLayer::GetBiasesGradient() const noexcept {
 	return biases_gradient_;
 }
 
-MatrixIn NeuronalLayer::GetOutputs() const {
+MatrixIn NeuronalLayer::GetOutputs() const noexcept {
 	return outputs_;
 }
 
-MatrixIn NeuronalLayer::GetInputsGradient() const {
+MatrixIn NeuronalLayer::GetInputsGradient() const noexcept {
 	return inputs_gradient_;
 }
 
