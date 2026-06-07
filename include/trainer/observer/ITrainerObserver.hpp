@@ -10,7 +10,8 @@ class ITrainerObserver {
 	ITrainerObserver& operator=(ITrainerObserver&&) noexcept = delete;
 
 	virtual ~ITrainerObserver() = default;
-	virtual void OnEpochEnd(int64_t epoch_index, float accuracy) = 0;
+	virtual void OnEpochEnd(int64_t epoch_index, float loss,
+							float accuracy) = 0;
 
    protected:
 	ITrainerObserver() = default;

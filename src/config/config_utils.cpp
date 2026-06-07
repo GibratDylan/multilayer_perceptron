@@ -32,7 +32,7 @@ bool ParseSigned(std::string_view token, int64_t* out) {
 		return false;
 	}
 	if (pos != token.size()) return false;
-	if (value > std::numeric_limits<int>::max()) return false;
+	if (value > std::numeric_limits<int64_t>::max()) return false;
 	*out = value;
 	return true;
 }

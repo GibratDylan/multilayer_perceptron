@@ -1,6 +1,10 @@
 #include "config/Config.hpp"
+#include "data/Dataset.hpp"
 #include "network/Network.hpp"
 #include "network/NetworkBuilder.hpp"
+#include "trainer/Trainer.hpp"
+#include "trainer/observer/TrainerObserverMetricsCsv.hpp"
+#include "trainer/observer/TrainerObserverMetricsLog.hpp"
 #include "types/eigen_types.hpp"
 
 #include <iostream>
@@ -27,37 +31,19 @@ int main(int argc, const char** argv) {
 	IntVector targets(config.GetBatchSize());
 	for (int64_t i{}; i < targets.rows(); ++i) targets(i) = 1;
 
+	Dataset dataset{std::move(inputs), std::move(targets),
+					config.GetBatchSize()};
+
 	NetworkBuilder network_builder{config};
 
 	Network network{network_builder.Build()};
 
-	std::cout << network.ForwardPass(inputs, targets) << '\n';
-	network.BackwardPass(targets);
-	std::cout << network.GetNeuronalLayers().front() << '\n';
+	Trainer trainer{};
 
-	// Layer dense_1{2, 10};
-	// ActivationReLU activation_1{};
-	// Layer dense_2{10, 2};
-	// ActivationSoftmax activation_2{};
-	// LossCategoricalCrossEntropy loss{};
+	trainer.AddObserver(std::make_unique<TrainerObserverMetricsCsv>());
+	trainer.AddObserver(std::make_unique<TrainerObserverMetricsLog>());
 
-	// std::cout << "\n\nForward:\n";
-	// dense_1.forward(inputs);
-	// activation_1.forward(dense_1.getOutputs());
-	// dense_2.forward(activation_1.getOutputs());
-	// std::cout << dense_2 << '\n';
-	// activation_2.forward(dense_2.getOutputs());
-	// std::cout << activation_2 << '\n';
-	// loss.forward(activation_2.getOutputs(), targets);
-	// std::cout << loss << '\n';
-
-	// std::cout << "\n\nBackward:\n";
-	// loss.backward(targets);
-	// std::cout << loss << '\n';
-	// activation_2.backward(loss.getInputsGradient());
-	// std::cout << activation_2 << '\n';
-	// dense_2.backward(activation_2.getInputsGradient());
-	// std::cout << dense_2 << '\n';
+	trainer.Train(network, dataset, config);
 
 	return 0;
 }
@@ -66,7 +52,7 @@ int main(int argc, const char** argv) {
 // Optimise memory usage (Ne plus stocker dans les backwardpass ? )
 // BackwardPass
 // Optimizer
-// dataset_csv
-// Rajouter et verifier les assert
-// Catch exception main et exception safety program
-// Release mode
+// Ajouter des metrics et modifier les string en dur dans MetricsCsv (Les
+// recuperer depuis main)
+// Rajouter et verifier les assert Catch exception main
+// et exception safety program Release mode

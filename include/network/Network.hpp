@@ -1,7 +1,7 @@
 #pragma once
 
-#include "layer/NeuronalLayer.hpp"
 #include "activation/AActivation.hpp"
+#include "layer/NeuronalLayer.hpp"
 #include "loss/ALoss.hpp"
 #include "types/eigen_types.hpp"
 
@@ -23,12 +23,13 @@ class Network {
 	Network& AddLayer(NeuronalLayer&& neuronal_layer,
 					  std::unique_ptr<AActivation>&& activation_func);
 
-	float ForwardPass(const MatrixIn& input_batch,
+	void ForwardPass(const MatrixIn& input_batch,
 					  const IntVectorIn& targets_batch);
 	void BackwardPass(const IntVectorIn& targets_batch);
 
 	const std::vector<NeuronalLayer>& GetNeuronalLayers() const noexcept;
-	const std::vector<std::unique_ptr<AActivation>>& GetActivationLayers() const noexcept;
+	const std::vector<std::unique_ptr<AActivation>>& GetActivationLayers()
+		const noexcept;
 	const ALoss& GetLossFunc() const noexcept;
 
    private:

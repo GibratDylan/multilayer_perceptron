@@ -28,9 +28,10 @@ Network& Network::AddLayer(NeuronalLayer&& neuronal_layer,
 	return *this;
 }
 
-float Network::ForwardPass(const MatrixIn& input_batch,
+void Network::ForwardPass(const MatrixIn& input_batch,
 						   const IntVectorIn& targets_batch) {
 	assert(size_ > 0);
+	assert(loss_func_ != nullptr);
 	assert(targets_batch.size() > 0 && input_batch.size() > 0);
 	assert(input_batch.cols() == targets_batch.rows());
 
@@ -44,12 +45,12 @@ float Network::ForwardPass(const MatrixIn& input_batch,
 	}
 
 	loss_func_->Forward(activation_func_.back()->GetOutputs(), targets_batch);
-	return loss_func_->GetLoss();
 }
 
 void Network::BackwardPass(const IntVectorIn& targets_batch) {
 	assert(size_ > 0);
 	assert(targets_batch.size() > 0);
+	assert(loss_func_ != nullptr);
 
 	loss_func_->Backward(targets_batch);
 
@@ -69,7 +70,7 @@ void Network::BackwardPass(const IntVectorIn& targets_batch) {
 }
 
 void Network::AddNeuronalLayer(NeuronalLayer&& neuronal_layer) {
-	assert(size_ < std::numeric_limits<int>::max());
+	assert(size_ < std::numeric_limits<int64_t>::max());
 	neuronal_layers_.push_back(std::move(neuronal_layer));
 	++size_;
 }

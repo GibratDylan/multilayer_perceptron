@@ -38,13 +38,14 @@ add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.cpp
 	${SRCS_DIR}/trainer/Trainer.cpp
 	${SRCS_DIR}/trainer/metrics.cpp
-	${SRCS_DIR}/trainer/observer/TrainerObserverMetricsWriter.cpp
+	${SRCS_DIR}/trainer/observer/TrainerObserverMetricsCsv.cpp
+	${SRCS_DIR}/trainer/observer/TrainerObserverMetricsLog.cpp
 	${SRCS_DIR}/network/Network.cpp
 	${SRCS_DIR}/network/NetworkBuilder.cpp
 	${SRCS_DIR}/config/Config.cpp
 	${SRCS_DIR}/config/config_utils.cpp
 	${SRCS_DIR}/data/Dataset.cpp
-	${SRCS_DIR}/data/csv_dataset.cpp
+	${SRCS_DIR}/data/csv.cpp
 
 	${HEADERS_DIR}/layer/NeuronalLayer.hpp
 	${HEADERS_DIR}/activation/AActivation.hpp
@@ -55,7 +56,8 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.hpp
 	${HEADERS_DIR}/trainer/Trainer.hpp
 	${HEADERS_DIR}/trainer/metrics.hpp
-	${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsWriter.hpp
+	${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsCsv.hpp
+	${HEADERS_DIR}/trainer/observer/TrainerObserverMetricsLog.hpp
 	${HEADERS_DIR}/trainer/observer/ITrainerObserver.hpp
 	${HEADERS_DIR}/network/Network.hpp
 	${HEADERS_DIR}/network/NetworkBuilder.hpp
@@ -63,7 +65,7 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/config/config_utils.hpp
 	${HEADERS_DIR}/types/eigen_types.hpp
 	${HEADERS_DIR}/data/Dataset.hpp
-	${HEADERS_DIR}/data/csv_dataset.hpp
+	${HEADERS_DIR}/data/csv.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

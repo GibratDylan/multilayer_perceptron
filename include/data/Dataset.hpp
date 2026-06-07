@@ -18,7 +18,7 @@ class Dataset {
 									const Dataset* parent_ptr) noexcept
 			: pos_{pos}, parent_ptr_{parent_ptr} {}
 
-		Matrix operator*() const {
+		std::pair<Matrix, IntVector> operator*() const {
 			assert(pos_ >= 0 &&
 				   pos_ < static_cast<int64_t>(parent_ptr_->indices_.size()) &&
 				   parent_ptr_->indices_.size() <
@@ -29,13 +29,17 @@ class Dataset {
 						 static_cast<int64_t>(parent_ptr_->indices_.size()))};
 
 			Matrix batch(parent_ptr_->dataset_.rows(), end_pos - pos_);
+			IntVector target(end_pos - pos_);
 
-			for (int64_t index{0}, start_pos{pos_}; start_pos < end_pos;
-				 ++start_pos, ++index)
-				batch.col(index) =
-					parent_ptr_->dataset_.col(parent_ptr_->indices_[start_pos]);
+			for (int64_t index{}, start_pos{pos_}; start_pos < end_pos;
+				 ++start_pos, ++index) {
+				int64_t pos{parent_ptr_->indices_[start_pos]};
 
-			return batch;
+				batch.col(index) = parent_ptr_->dataset_.col(pos);
+				target.row(index) = parent_ptr_->target_data_.row(pos);
+			}
+
+			return {batch, target};
 		}
 
 		const ConstBatchIterator& operator++() noexcept {
@@ -51,11 +55,13 @@ class Dataset {
 
    private:
 	const Matrix dataset_{};
+	const IntVector target_data_{};
 	std::vector<int64_t> indices_{};
 	int64_t batch_size_{};
 
    public:
-	explicit Dataset(Matrix&& dataset, int64_t batch_size);
+	explicit Dataset(Matrix&& dataset, IntVector&& target_data,
+					 int64_t batch_size);
 
 	// NOLINTBEGIN(readability-identifier-naming*)
 	ConstBatchIterator cbegin() const noexcept;

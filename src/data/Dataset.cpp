@@ -8,9 +8,11 @@
 
 #include <Eigen/Dense>
 
-Dataset::Dataset(Matrix&& dataset, int64_t batch_size)
+Dataset::Dataset(Matrix&& dataset, IntVector&& target_data,
+				 int64_t batch_size)
 	: dataset_{std::move(dataset)},
-	  indices_(dataset.cols()),
+	  target_data_{std::move(target_data)},
+	  indices_(dataset_.cols()),
 	  batch_size_{batch_size} {
 	assert(batch_size_ > 0);
 	assert(dataset_.rows() > 0);
