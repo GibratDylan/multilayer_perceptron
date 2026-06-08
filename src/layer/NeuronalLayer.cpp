@@ -1,5 +1,9 @@
 #include "layer/NeuronalLayer.hpp"
 
+#include "types/eigen_types.hpp"
+
+#include <cassert>
+#include <cstdint>
 #include <ostream>
 
 NeuronalLayer::NeuronalLayer(int64_t input_size, int64_t num_neurons)

@@ -4,6 +4,7 @@
 #include "loss/ALoss.hpp"
 
 #include <cstdint>
+#include <fstream>
 #include <string>
 #include <string_view>
 #include <unordered_map>

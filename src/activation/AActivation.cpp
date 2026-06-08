@@ -1,6 +1,9 @@
 #include "activation/AActivation.hpp"
 
+#include "types/eigen_types.hpp"
+
 #include <ostream>
+#include <string_view>
 
 MatrixIn AActivation::GetOutputs() const noexcept {
 	return outputs_;

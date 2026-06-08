@@ -1,10 +1,16 @@
 #include "network/Network.hpp"
 
+#include "activation/AActivation.hpp"
 #include "layer/NeuronalLayer.hpp"
+#include "loss/ALoss.hpp"
 #include "types/eigen_types.hpp"
 
+#include <cassert>
+#include <cstdint>
 #include <limits>
 #include <memory>
+#include <utility>
+#include <vector>
 
 Network::Network(std::unique_ptr<ALoss>&& loss_func)
 	: loss_func_(std::move(loss_func)), size_{} {}

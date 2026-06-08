@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ALoss.hpp"
+#include "types/eigen_types.hpp"
 
 class LossCategoricalCrossEntropy : public ALoss {
    public:

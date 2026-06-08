@@ -66,6 +66,8 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/types/eigen_types.hpp
 	${HEADERS_DIR}/data/Dataset.hpp
 	${HEADERS_DIR}/data/csv.hpp
+	${HEADERS_DIR}/error/Result.hpp
+	${HEADERS_DIR}/error/error.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

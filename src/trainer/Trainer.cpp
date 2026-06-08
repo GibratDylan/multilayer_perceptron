@@ -7,6 +7,9 @@
 #include "trainer/observer/ITrainerObserver.hpp"
 
 #include <cassert>
+#include <cstdint>
+#include <memory>
+#include <utility>
 #include <vector>
 
 void Trainer::AddObserver(std::unique_ptr<ITrainerObserver>&& observer) {

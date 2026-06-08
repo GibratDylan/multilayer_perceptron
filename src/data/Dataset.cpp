@@ -2,9 +2,14 @@
 
 #include "types/eigen_types.hpp"
 
+#include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
+#include <limits>
+#include <numeric>
 #include <random>
+#include <utility>
 
 #include <Eigen/Dense>
 

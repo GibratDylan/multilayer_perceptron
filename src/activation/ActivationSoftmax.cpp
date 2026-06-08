@@ -1,5 +1,10 @@
 #include "activation/ActivationSoftmax.hpp"
 
+#include "types/eigen_types.hpp"
+
+#include <cassert>
+#include <cstdint>
+
 void ActivationSoftmax::Forward(const MatrixIn& input_batch) {
 	inputs_ = input_batch;
 	outputs_ = input_batch.rowwise() - input_batch.colwise().maxCoeff();

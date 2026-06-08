@@ -1,12 +1,17 @@
 #include "data/csv.hpp"
 
 #include "data/Dataset.hpp"
+#include "types/eigen_types.hpp"
 
+#include <cassert>
 #include <cstdint>
 #include <fstream>
 #include <optional>
+#include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
+#include <utility>
 
 namespace csv {
 std::optional<std::pair<int64_t, int64_t>> GetSizeCSV(const std::string& path) {
@@ -62,6 +67,7 @@ Dataset CsvLoader(const std::string& path) {
 	int64_t rows{};
 	while (getline(file, line)) {
 		int64_t cols{};
+		bool seen{};
 		std::string word{};
 		std::stringstream line_stream{line};
 
@@ -72,10 +78,11 @@ Dataset CsvLoader(const std::string& path) {
 				// VERIFICATION stof !!!!!!!!!!!!!!!
 				// MODIFICATION COLS TARGET !!!!!!!!!!!!!!!
 				// NOLINTBEGIN(readability-suspicious-call-argument)
-				dataset(cols, rows) = std::stof(word);
+				dataset(cols - seen, rows) = std::stof(word);
 				// NOLINTEND(readability-suspicious-call-argument)
 			} else {
 				// Doit etre rendu plus clean
+				seen = true;
 				targe_data(rows) = word == "M";
 			}
 
@@ -94,10 +101,12 @@ std::pair<Dataset, Dataset> DatasetSplit(Dataset& dataset, float ratio) {
 		static_cast<int64_t>(static_cast<float>(dataset.GetSize()) * ratio)};
 
 	dataset.SetBatchSize(size);
+	dataset.RandDataset();
 	auto it = dataset.begin();
 
 	Dataset first{(*it).first, (*it).second};
 	++it;
+	dataset.SetBatchSize(dataset.GetSize() - size);
 	Dataset second{(*it).first, (*it).second};
 
 	return {std::move(first), std::move(second)};
@@ -108,14 +117,20 @@ void CsvDumper(const std::string& path, std::string_view header,
 	dataset.SetBatchSize(1);
 
 	for (auto&& [batch, target] : dataset) {
-		std::string batch_line{};
+		std::string csv_line{};
 
-		for (int64_t index{}; index < batch.size(); ++index) {
-			if (index) batch_line += ',';
-			batch_line += std::to_string(batch(index));
+		bool seen{};
+		for (int64_t index{}; index < batch.size() + 1; ++index) {
+			if (index) csv_line += ',';
+			if (index == 1) {
+				csv_line += target(0) ? 'M' : 'B';
+				seen = true;
+			} else {
+				csv_line += std::to_string(batch(index - seen));
+			}
 		}
 
-		WriteToCsv(path, header, batch_line, target(0));
+		WriteToCsv(path, header, csv_line);
 	}
 }
 }  // namespace csv

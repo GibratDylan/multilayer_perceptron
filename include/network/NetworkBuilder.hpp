@@ -1,8 +1,11 @@
 #pragma once
 
+#include "activation/AActivation.hpp"
 #include "config/Config.hpp"
+#include "loss/ALoss.hpp"
 #include "network/Network.hpp"
 
+#include <cstdint>
 #include <memory>
 
 class NetworkBuilder {

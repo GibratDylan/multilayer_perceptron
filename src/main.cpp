@@ -1,12 +1,5 @@
-#include "config/Config.hpp"
 #include "data/Dataset.hpp"
 #include "data/csv.hpp"
-#include "network/Network.hpp"
-#include "network/NetworkBuilder.hpp"
-#include "trainer/Trainer.hpp"
-#include "trainer/observer/TrainerObserverMetricsCsv.hpp"
-#include "trainer/observer/TrainerObserverMetricsLog.hpp"
-#include "types/eigen_types.hpp"
 
 #include <iostream>
 #include <string>
@@ -47,7 +40,7 @@ int main(int argc, const char** argv) {
 
 	Dataset test{csv::CsvLoader(argv[1])};
 
-	auto pair{csv::DatasetSplit(test, 0.5)};
+	auto pair{csv::DatasetSplit(test, 0.1)};
 
 	csv::CsvDumper("test1", "", pair.first);
 	csv::CsvDumper("test2", "", pair.second);

@@ -5,7 +5,9 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <string>
 #include <string_view>
+#include <utility>
 
 namespace csv {
 bool GetSizeCSV(const std::string& path, int64_t& rows, int64_t& cols);
@@ -16,7 +18,7 @@ void CsvDumper(const std::string& path, std::string_view header,
 
 template <typename... Args>
 void WriteToCsv(const std::string& path, std::string_view header,
-				Args... args) {
+				const Args&... args) {
 	std::ofstream metrics_csv{path, std::ios::out | std::ios::app};
 
 	if (!metrics_csv.good()) {
@@ -24,7 +26,7 @@ void WriteToCsv(const std::string& path, std::string_view header,
 		return;
 	}
 
-	if (!metrics_csv.tellp()) {
+	if (!metrics_csv.tellp() && !header.empty()) {
 		metrics_csv << header << '\n';
 	}
 

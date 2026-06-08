@@ -1,5 +1,9 @@
 #include "activation_loss/ActivationSoftmaxLossCategoricalCrossentropy.hpp"
 
+#include "types/eigen_types.hpp"
+
+#include <cassert>
+#include <cstdint>
 #include <ostream>
 
 void ActivationSoftmaxLossCategoricalCrossentropy::Forward(

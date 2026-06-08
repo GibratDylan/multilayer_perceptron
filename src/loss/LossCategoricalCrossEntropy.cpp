@@ -1,5 +1,11 @@
 #include "loss/LossCategoricalCrossEntropy.hpp"
 
+#include "types/eigen_types.hpp"
+
+#include <algorithm>
+#include <cassert>
+#include <cstdint>
+
 void LossCategoricalCrossEntropy::Forward(const MatrixIn& logits_batch,
 										  IntVectorIn targets_batch) {
 	assert(logits_batch.cols() == targets_batch.rows() &&

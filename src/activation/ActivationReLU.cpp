@@ -1,5 +1,10 @@
 #include "activation/ActivationReLU.hpp"
 
+#include "types/eigen_types.hpp"
+
+#include <cassert>
+#include <cstdint>
+
 void ActivationReLU::Forward(const MatrixIn& input_batch) {
 	inputs_ = input_batch;
 	outputs_ = input_batch.cwiseMax(0.F);

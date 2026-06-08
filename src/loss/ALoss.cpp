@@ -1,6 +1,10 @@
 #include "loss/ALoss.hpp"
 
+#include "types/eigen_types.hpp"
+
+#include <cassert>
 #include <ostream>
+#include <string_view>
 
 float ALoss::GetLoss() const noexcept {
 	assert(outputs_.size() > 0);

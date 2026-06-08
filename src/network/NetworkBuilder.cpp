@@ -3,12 +3,17 @@
 #include "activation/AActivation.hpp"
 #include "activation/ActivationReLU.hpp"
 #include "activation/ActivationSoftmax.hpp"
+#include "config/Config.hpp"
 #include "loss/ALoss.hpp"
 #include "loss/LossCategoricalCrossEntropy.hpp"
+#include "network/Network.hpp"
 
+#include <cassert>
+#include <cstdint>
 #include <limits>
 #include <memory>
 #include <stdexcept>
+#include <utility>
 
 NetworkBuilder::NetworkBuilder(Config config) : config_{std::move(config)} {}
 

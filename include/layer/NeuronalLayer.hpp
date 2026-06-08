@@ -2,6 +2,7 @@
 
 #include "types/eigen_types.hpp"
 
+#include <cstdint>
 #include <ostream>
 
 class NeuronalLayer {

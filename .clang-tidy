@@ -1,4 +1,6 @@
 ---
+# .clang-tidy — style Google, conventions de nommage explicites.
+
 Checks: >
   -*,
   bugprone-*,
@@ -6,6 +8,7 @@ Checks: >
   google-*,
   performance-*,
   readability-*,
+  misc-include-cleaner,
   -bugprone-easily-swappable-parameters,
   -bugprone-empty-catch,
   -readability-braces-around-statements,
@@ -19,76 +22,54 @@ Checks: >
   -readability-redundant-member-init,
   -readability-redundant-string-init,
   -readability-magic-numbers
+
 WarningsAsErrors: '*'
-HeaderFilterRegex: '.*'
+
+HeaderFilterRegex: '(src|include)/.*'
+
 FormatStyle: file
+
 CheckOptions:
-  # ---- Types : CamelCase ----
-  - key: readability-identifier-naming.NamespaceCase
-    value: lower_case
-  - key: readability-identifier-naming.ClassCase
-    value: CamelCase
-  - key: readability-identifier-naming.StructCase
-    value: CamelCase
-  - key: readability-identifier-naming.EnumCase
-    value: CamelCase
-  - key: readability-identifier-naming.UnionCase
-    value: CamelCase
-  - key: readability-identifier-naming.TypedefCase
-    value: CamelCase
-  - key: readability-identifier-naming.TypeAliasCase
-    value: CamelCase
-  - key: readability-identifier-naming.TypeTemplateParameterCase
-    value: CamelCase
-  # ---- Fonctions : PascalCase ----
-  - key: readability-identifier-naming.FunctionCase
-    value: CamelCase
+  # ---- IWYU / include-cleaner : ignore les umbrella headers d'Eigen ----
+  misc-include-cleaner.IgnoreHeaders: 'Eigen/.*'
+
+  # ---- Types : CamelCase (= PascalCase dans le vocabulaire clang-tidy) ----
+  readability-identifier-naming.NamespaceCase: lower_case
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.UnionCase: CamelCase
+  readability-identifier-naming.TypedefCase: CamelCase
+  readability-identifier-naming.TypeAliasCase: CamelCase
+  readability-identifier-naming.TypeTemplateParameterCase: CamelCase
+
+  # ---- Fonctions : CamelCase (PascalCase) ----
+  readability-identifier-naming.FunctionCase: CamelCase
+
   # ---- Variables / paramètres : snake_case ----
-  - key: readability-identifier-naming.VariableCase
-    value: lower_case
-  - key: readability-identifier-naming.ParameterCase
-    value: lower_case
-  - key: readability-identifier-naming.LocalVariableCase
-    value: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.LocalVariableCase: lower_case
+  readability-identifier-naming.LocalConstantCase: lower_case
+  readability-identifier-naming.ConstantParameterCase: lower_case
+
   # ---- Membres de données ----
-  - key: readability-identifier-naming.PublicMemberCase      # ~ membres de struct (pas de suffixe)
-    value: lower_case
-  - key: readability-identifier-naming.PrivateMemberCase
-    value: lower_case
-  - key: readability-identifier-naming.PrivateMemberSuffix
-    value: '_'
-  - key: readability-identifier-naming.ProtectedMemberCase
-    value: lower_case
-  - key: readability-identifier-naming.ProtectedMemberSuffix
-    value: '_'
-  - key: readability-identifier-naming.ClassMemberCase       # membres statiques
-    value: lower_case
+  readability-identifier-naming.PublicMemberCase: lower_case
+  readability-identifier-naming.PrivateMemberCase: lower_case
+  readability-identifier-naming.PrivateMemberSuffix: '_'
+  readability-identifier-naming.ProtectedMemberCase: lower_case
+  readability-identifier-naming.ProtectedMemberSuffix: '_'
+  readability-identifier-naming.ClassMemberCase: lower_case
+
   # ---- Constantes à durée de vie statique : kCamelCase ----
-  - key: readability-identifier-naming.GlobalConstantCase
-    value: CamelCase
-  - key: readability-identifier-naming.GlobalConstantPrefix
-    value: 'k'
-  - key: readability-identifier-naming.ClassConstantCase
-    value: CamelCase
-  - key: readability-identifier-naming.ClassConstantPrefix
-    value: 'k'
-  - key: readability-identifier-naming.StaticConstantCase
-    value: CamelCase
-  - key: readability-identifier-naming.StaticConstantPrefix
-    value: 'k'
-  - key: readability-identifier-naming.ConstexprVariableCase
-    value: CamelCase
-  - key: readability-identifier-naming.ConstexprVariablePrefix
-    value: 'k'
-  - key: readability-identifier-naming.EnumConstantCase
-    value: CamelCase
-  - key: readability-identifier-naming.EnumConstantPrefix
-    value: 'k'
-  # ---- Constantes locales : snake_case (pas de k) ----
-  - key: readability-identifier-naming.LocalConstantCase
-    value: lower_case
-  - key: readability-identifier-naming.ConstantParameterCase
-    value: lower_case
+  readability-identifier-naming.GlobalConstantCase: CamelCase
+  readability-identifier-naming.GlobalConstantPrefix: 'k'
+  readability-identifier-naming.ClassConstantCase: CamelCase
+  readability-identifier-naming.ClassConstantPrefix: 'k'
+  readability-identifier-naming.StaticConstantCase: CamelCase
+  readability-identifier-naming.StaticConstantPrefix: 'k'
+  readability-identifier-naming.EnumConstantCase: CamelCase
+  readability-identifier-naming.EnumConstantPrefix: 'k'
+
   # ---- Macros : UPPER_CASE ----
-  - key: readability-identifier-naming.MacroDefinitionCase
-    value: UPPER_CASE
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE

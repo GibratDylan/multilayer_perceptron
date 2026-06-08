@@ -1,5 +1,10 @@
 #include "trainer/metrics.hpp"
 
+#include "types/eigen_types.hpp"
+
+#include <cassert>
+#include <cstdint>
+
 namespace metrics {
 float Accuracy(const MatrixIn& logits_batch, IntVectorIn targets_batch) {
 	assert(logits_batch.cols() == targets_batch.rows() &&
