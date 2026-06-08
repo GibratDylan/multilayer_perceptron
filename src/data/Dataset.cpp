@@ -8,13 +8,10 @@
 
 #include <Eigen/Dense>
 
-Dataset::Dataset(Matrix&& dataset, IntVector&& target_data,
-				 int64_t batch_size)
+Dataset::Dataset(Matrix&& dataset, IntVector&& target_data)
 	: dataset_{std::move(dataset)},
 	  target_data_{std::move(target_data)},
-	  indices_(dataset_.cols()),
-	  batch_size_{batch_size} {
-	assert(batch_size_ > 0);
+	  indices_(dataset_.cols()) {
 	assert(dataset_.rows() > 0);
 	assert(dataset_.cols() > 0);
 	assert(indices_.size() == static_cast<size_t>(dataset_.cols()));
@@ -46,4 +43,12 @@ void Dataset::RandDataset() {
 	std::random_device random{};
 	std::mt19937 generator{random()};
 	std::shuffle(indices_.begin(), indices_.end(), generator);
+}
+
+void Dataset::SetBatchSize(int64_t batch_size) noexcept {
+	batch_size_ = batch_size;
+}
+
+int64_t Dataset::GetSize() const noexcept {
+	return dataset_.cols();
 }

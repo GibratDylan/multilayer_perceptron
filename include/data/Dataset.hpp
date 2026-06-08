@@ -24,6 +24,8 @@ class Dataset {
 				   parent_ptr_->indices_.size() <
 					   std::numeric_limits<int64_t>::max());
 
+			assert(parent_ptr_->batch_size_ > 0);
+
 			const int64_t end_pos{
 				std::min(pos_ + parent_ptr_->batch_size_,
 						 static_cast<int64_t>(parent_ptr_->indices_.size()))};
@@ -43,6 +45,8 @@ class Dataset {
 		}
 
 		const ConstBatchIterator& operator++() noexcept {
+			assert(parent_ptr_->batch_size_ > 0);
+
 			pos_ = std::min(pos_ + parent_ptr_->batch_size_,
 							static_cast<int64_t>(parent_ptr_->indices_.size()));
 			return *this;
@@ -60,8 +64,7 @@ class Dataset {
 	int64_t batch_size_{};
 
    public:
-	explicit Dataset(Matrix&& dataset, IntVector&& target_data,
-					 int64_t batch_size);
+	explicit Dataset(Matrix&& dataset, IntVector&& target_data);
 
 	// NOLINTBEGIN(readability-identifier-naming*)
 	ConstBatchIterator cbegin() const noexcept;
@@ -71,4 +74,6 @@ class Dataset {
 	// NOLINTEND(readability-identifier-naming*)
 
 	void RandDataset();
+	void SetBatchSize(int64_t batch_size) noexcept;
+	int64_t GetSize() const noexcept;
 };

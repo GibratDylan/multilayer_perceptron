@@ -9,9 +9,10 @@
 
 namespace csv {
 bool GetSizeCSV(const std::string& path, int64_t& rows, int64_t& cols);
-Dataset CsvLoader(std::string_view path);
-std::pair<Dataset, Dataset> DatasetSplit(const Dataset& dataset, int64_t ratio);
-void CsvDumper(const Dataset& dataset);
+Dataset CsvLoader(const std::string& path);
+std::pair<Dataset, Dataset> DatasetSplit(Dataset& dataset, float ratio);
+void CsvDumper(const std::string& path, std::string_view header,
+			   Dataset& dataset);
 
 template <typename... Args>
 void WriteToCsv(const std::string& path, std::string_view header,

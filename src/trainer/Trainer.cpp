@@ -17,6 +17,8 @@ void Trainer::AddObserver(std::unique_ptr<ITrainerObserver>&& observer) {
 
 void Trainer::Train(Network& network, Dataset& dataset,
 					const Config& config) const {
+	dataset.SetBatchSize(config.GetBatchSize());
+
 	for (int64_t epoch{1}; epoch <= config.GetEpochs(); ++epoch) {
 		dataset.RandDataset();
 

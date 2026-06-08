@@ -1,5 +1,6 @@
 #include "config/Config.hpp"
 #include "data/Dataset.hpp"
+#include "data/csv.hpp"
 #include "network/Network.hpp"
 #include "network/NetworkBuilder.hpp"
 #include "trainer/Trainer.hpp"
@@ -16,34 +17,40 @@ int main(int argc, const char** argv) {
 		return 1;
 	}
 
-	Config config{std::string{argv[1]}};
-	if (!config.Parse()) return 1;
+	// Config config{std::string{argv[1]}};
+	// if (!config.Parse()) return 1;
 
-	/// inputs = rows(input), batch = cols(batch)
-	Matrix inputs(config.GetNeuralLayer().front(), config.GetBatchSize());
-	for (int64_t i{}; i < inputs.rows(); ++i) {
-		for (int64_t j{}; j < inputs.cols(); ++j) {
-			inputs(i, j) = 0.5F;
-		}
-	}
+	// /// inputs = rows(input), batch = cols(batch)
+	// Matrix inputs(config.GetNeuralLayer().front(), config.GetBatchSize());
+	// for (int64_t i{}; i < inputs.rows(); ++i) {
+	// 	for (int64_t j{}; j < inputs.cols(); ++j) {
+	// 		inputs(i, j) = 0.5F;
+	// 	}
+	// }
 
-	/// targets = rows(batch)
-	IntVector targets(config.GetBatchSize());
-	for (int64_t i{}; i < targets.rows(); ++i) targets(i) = 1;
+	// /// targets = rows(batch)
+	// IntVector targets(config.GetBatchSize());
+	// for (int64_t i{}; i < targets.rows(); ++i) targets(i) = 1;
 
-	Dataset dataset{std::move(inputs), std::move(targets),
-					config.GetBatchSize()};
+	// Dataset dataset{std::move(inputs), std::move(targets)};
 
-	NetworkBuilder network_builder{config};
+	// NetworkBuilder network_builder{config};
 
-	Network network{network_builder.Build()};
+	// Network network{network_builder.Build()};
 
-	Trainer trainer{};
+	// Trainer trainer{};
 
-	trainer.AddObserver(std::make_unique<TrainerObserverMetricsCsv>());
-	trainer.AddObserver(std::make_unique<TrainerObserverMetricsLog>());
+	// trainer.AddObserver(std::make_unique<TrainerObserverMetricsCsv>());
+	// trainer.AddObserver(std::make_unique<TrainerObserverMetricsLog>());
 
-	trainer.Train(network, dataset, config);
+	// trainer.Train(network, dataset, config);
+
+	Dataset test{csv::CsvLoader(argv[1])};
+
+	auto pair{csv::DatasetSplit(test, 0.5)};
+
+	csv::CsvDumper("test1", "", pair.first);
+	csv::CsvDumper("test2", "", pair.second);
 
 	return 0;
 }
