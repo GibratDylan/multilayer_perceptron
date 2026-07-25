@@ -1,10 +1,13 @@
 #pragma once
 
 #include "data/Dataset.hpp"
+#include "error/Result.hpp"
+#include "error/error.hpp"
 
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -17,13 +20,12 @@ void CsvDumper(const std::string& path, std::string_view header,
 			   Dataset& dataset);
 
 template <typename... Args>
-void WriteToCsv(const std::string& path, std::string_view header,
+Result<std::nullopt_t, CsvError> WriteToCsv(const std::string& path, std::string_view header,
 				const Args&... args) {
 	std::ofstream metrics_csv{path, std::ios::out | std::ios::app};
 
 	if (!metrics_csv.good()) {
-		std::cerr << "std::ofstream fail !\n";
-		return;
+		return Result<std::nullopt_t, CsvError>{CsvError::kCannotOpen};
 	}
 
 	if (!metrics_csv.tellp() && !header.empty()) {
@@ -41,5 +43,6 @@ void WriteToCsv(const std::string& path, std::string_view header,
 
 	(write_arg(args), ...);
 	metrics_csv << '\n';
+	return Result<std::nullopt_t, CsvError>{std::nullopt};
 }
 }  // namespace csv

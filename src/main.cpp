@@ -10,6 +10,13 @@ int main(int argc, const char** argv) {
 		return 1;
 	}
 
+	Dataset test{csv::CsvLoader(argv[1])};
+
+	auto pair{csv::DatasetSplit(test, 0.1)};
+
+	csv::CsvDumper("test1", "", pair.first);
+	csv::CsvDumper("test2", "", pair.second);
+
 	// Config config{std::string{argv[1]}};
 	// if (!config.Parse()) return 1;
 
@@ -38,19 +45,12 @@ int main(int argc, const char** argv) {
 
 	// trainer.Train(network, dataset, config);
 
-	Dataset test{csv::CsvLoader(argv[1])};
-
-	auto pair{csv::DatasetSplit(test, 0.1)};
-
-	csv::CsvDumper("test1", "", pair.first);
-	csv::CsvDumper("test2", "", pair.second);
 
 	return 0;
 }
 
 // Chercher erreur optimisation
 // Optimise memory usage (Ne plus stocker dans les backwardpass ? )
-// BackwardPass
 // Optimizer
 // Ajouter des metrics et modifier les string en dur dans MetricsCsv (Les
 // recuperer depuis main)

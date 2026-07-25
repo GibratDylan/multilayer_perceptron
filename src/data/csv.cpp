@@ -1,12 +1,15 @@
 #include "data/csv.hpp"
 
 #include "data/Dataset.hpp"
+#include "error/Result.hpp"
+#include "error/error.hpp"
 #include "types/eigen_types.hpp"
 
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <fstream>
-#include <optional>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -14,11 +17,13 @@
 #include <utility>
 
 namespace csv {
-std::optional<std::pair<int64_t, int64_t>> GetSizeCSV(const std::string& path) {
+Result<std::pair<int64_t, int64_t>, CsvError> GetSizeCSV(
+	const std::string& path) {
 	std::ifstream file{path};
 
 	if (!file.is_open()) {
-		throw std::runtime_error("CSV can't be read in GetSizeCSV");
+		return Result<std::pair<int64_t, int64_t>, CsvError>{
+			CsvError::kCannotOpen};
 	}
 
 	int64_t rows{};
@@ -37,12 +42,15 @@ std::optional<std::pair<int64_t, int64_t>> GetSizeCSV(const std::string& path) {
 				++tmp_cols;
 		}
 
-		if (rows != 1 && tmp_cols != cols) return std::nullopt;
+		if (rows != 1 && tmp_cols != cols)
+			return Result<std::pair<int64_t, int64_t>, CsvError>{
+				CsvError::kNotRectangular};
 	}
 
-	if (!rows || !cols) return std::nullopt;
+	if (!rows || !cols)
+		return Result<std::pair<int64_t, int64_t>, CsvError>{CsvError::kEmpty};
 
-	return std::optional<std::pair<int64_t, int64_t>>{{rows, cols}};
+	return Result<std::pair<int64_t, int64_t>, CsvError>{{rows, cols}};
 }
 
 Dataset CsvLoader(const std::string& path) {
@@ -56,42 +64,54 @@ Dataset CsvLoader(const std::string& path) {
 	IntVector targe_data{};
 
 	if (auto result = GetSizeCSV(path)) {
-		auto [rows, cols] = *result;
+		auto [rows, cols] = result.value();
 		dataset = Matrix{cols - 1, rows};
 		targe_data = IntVector{rows};
-	} else {
+	} else if (result.error() == CsvError::kEmpty) {
 		throw std::runtime_error("Size CSV not valid");
+	} else if (result.error() == CsvError::kNotRectangular) {
+		throw std::runtime_error("CSV not Rectangular");
+	} else if (result.error() == CsvError::kCannotOpen) {
+		throw std::runtime_error("CSV can't be open");
 	}
 
 	std::string line{};
 	int64_t rows{};
 	while (getline(file, line)) {
 		int64_t cols{};
-		bool seen{};
+		bool seen_expected_result{};
 		std::string word{};
 		std::stringstream line_stream{line};
 
 		while (getline(line_stream, word, ',')) {
-			if (cols != 1) {
-				// We need to transpose data to row major, so we swap cols and
-				// rows
-				// VERIFICATION stof !!!!!!!!!!!!!!!
-				// MODIFICATION COLS TARGET !!!!!!!!!!!!!!!
-				// NOLINTBEGIN(readability-suspicious-call-argument)
-				dataset(cols - seen, rows) = std::stof(word);
-				// NOLINTEND(readability-suspicious-call-argument)
-			} else {
-				// Doit etre rendu plus clean
-				seen = true;
+			std::size_t pos{};
+			if (word == "M" || word == "B") {
+				seen_expected_result = true;
+				///////////// MODIFICATION COLS TARGET !!!!!!!!!!!!!!!
+				////////////////////
 				targe_data(rows) = word == "M";
+			} else {
+				float converted_value{};
+				try {
+					converted_value = std::stof(word, &pos);
+				} catch (std::invalid_argument& e) {
+					throw std::runtime_error("Out of range in CSV");
+				} catch (std::out_of_range& e) {
+					throw std::runtime_error(
+						"CSV expected value to predict not valid");
+				}
+				if (word[pos] != '\0')
+					throw std::runtime_error("CSV data not valid");
+				// NOLINTBEGIN(readability-suspicious-call-argument)
+				dataset(cols - seen_expected_result, rows) = converted_value;
+				// NOLINTEND(readability-suspicious-call-argument)
+
+				++cols;
 			}
 
-			++cols;
+			++rows;
 		}
-
-		++rows;
 	}
-
 	return Dataset{std::move(dataset), std::move(targe_data)};
 }
 
@@ -119,18 +139,21 @@ void CsvDumper(const std::string& path, std::string_view header,
 	for (auto&& [batch, target] : dataset) {
 		std::string csv_line{};
 
-		bool seen{};
+		bool seen_expected_result{};
 		for (int64_t index{}; index < batch.size() + 1; ++index) {
 			if (index) csv_line += ',';
 			if (index == 1) {
 				csv_line += target(0) ? 'M' : 'B';
-				seen = true;
+				seen_expected_result = true;
 			} else {
-				csv_line += std::to_string(batch(index - seen));
+				csv_line += std::to_string(batch(index - seen_expected_result));
 			}
 		}
 
-		WriteToCsv(path, header, csv_line);
+		auto result = WriteToCsv(path, header, csv_line);
+		if (result.error() == CsvError::kCannotOpen) {
+			throw std::runtime_error("CSV at " + path + " can't be create");
+		}
 	}
 }
 }  // namespace csv
