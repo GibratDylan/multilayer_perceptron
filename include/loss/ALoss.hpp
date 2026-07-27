@@ -14,12 +14,6 @@ class ALoss {
    public:
 	enum class LossFuncType : uint8_t { kCatCrossentropy, kNone };
 
-   protected:
-	Vector outputs_{};
-	Matrix inputs_{};
-
-	Matrix inputs_gradient_{};
-
    public:
 	ALoss(const ALoss&) = delete;
 	ALoss(ALoss&&) noexcept = delete;
@@ -41,4 +35,22 @@ class ALoss {
 
    protected:
 	ALoss() = default;
+
+	Vector& Outputs() noexcept { return outputs_; }
+
+	const Vector& Outputs() const noexcept { return outputs_; }
+
+	Matrix& Inputs() noexcept { return inputs_; }
+
+	const Matrix& Inputs() const noexcept { return inputs_; }
+
+	Matrix& InputsGradient() noexcept { return inputs_gradient_; }
+
+	const Matrix& InputsGradient() const noexcept { return inputs_gradient_; }
+
+   private:
+	Vector outputs_{};
+	Matrix inputs_{};
+
+	Matrix inputs_gradient_{};
 };

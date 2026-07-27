@@ -9,6 +9,14 @@ void TrainerObserverMetricsLog::OnEpochEnd(int64_t epoch_index, float loss,
 										   float accuracy) {
 	static bool header_printed{false};
 
+	constexpr int kBorderFirstSegment{10};
+	constexpr int kBorderSecondSegment{16};
+	constexpr int kBorderThirdSegment{14};
+	constexpr int kEpochWidth{8};
+	constexpr int kLossWidth{14};
+	constexpr int kAccuracyWidth{12};
+	constexpr int kPrecision{6};
+
 	constexpr const char* reset = "\033[0m";
 	constexpr const char* bold = "\033[1m";
 	constexpr const char* cyan = "\033[36m";
@@ -17,31 +25,34 @@ void TrainerObserverMetricsLog::OnEpochEnd(int64_t epoch_index, float loss,
 	constexpr const char* magenta = "\033[35m";
 	constexpr const char* dim = "\033[2m";
 
-	auto print_border{[] {
-		std::cout << dim << '+' << std::string(10, '-') << '+'
-				  << std::string(16, '-') << '+' << std::string(14, '-') << '+'
-				  << reset << '\n';
+	auto print_border{[&] {
+		std::cout << dim << '+' << std::string(kBorderFirstSegment, '-') << '+'
+				  << std::string(kBorderSecondSegment, '-') << '+'
+				  << std::string(kBorderThirdSegment, '-') << '+' << reset
+				  << '\n';
 	}};
 
 	if (!header_printed) {
 		std::cout << bold << cyan << "Training metrics" << reset << '\n';
 		print_border();
 		std::cout << dim << '|' << reset << ' ' << bold << std::left
-				  << std::setw(8) << "Epoch" << reset << ' ' << dim << '|'
-				  << reset << ' ' << bold << std::left << std::setw(14)
-				  << "Loss" << reset << ' ' << dim << '|' << reset << ' '
-				  << bold << std::left << std::setw(12) << "Accuracy" << reset
-				  << ' ' << dim << '|' << reset << '\n';
+				  << std::setw(kEpochWidth) << "Epoch" << reset << ' ' << dim
+				  << '|' << reset << ' ' << bold << std::left
+				  << std::setw(kLossWidth) << "Loss" << reset << ' ' << dim
+				  << '|' << reset << ' ' << bold << std::left
+				  << std::setw(kAccuracyWidth) << "Accuracy" << reset << ' '
+				  << dim << '|' << reset << '\n';
 		print_border();
 		header_printed = true;
 	}
 
 	std::cout << dim << '|' << reset << ' ' << yellow << std::left
-			  << std::setw(8) << epoch_index << reset << ' ' << dim << '|'
-			  << reset << ' ' << green << std::right << std::fixed
-			  << std::setprecision(6) << std::setw(14) << loss << reset << ' '
-			  << dim << '|' << reset << ' ' << magenta << std::right
-			  << std::fixed << std::setprecision(6) << std::setw(12) << accuracy
-			  << reset << ' ' << dim << '|' << reset << '\n';
+			  << std::setw(kEpochWidth) << epoch_index << reset << ' ' << dim
+			  << '|' << reset << ' ' << green << std::right << std::fixed
+			  << std::setprecision(kPrecision) << std::setw(kLossWidth) << loss
+			  << reset << ' ' << dim << '|' << reset << ' ' << magenta
+			  << std::right << std::fixed << std::setprecision(kPrecision)
+			  << std::setw(kAccuracyWidth) << accuracy << reset << ' ' << dim
+			  << '|' << reset << '\n';
 	print_border();
 }

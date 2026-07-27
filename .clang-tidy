@@ -4,6 +4,7 @@
 Checks: >
   -*,
   bugprone-*,
+  cppcoreguidelines-*,
   clang-analyzer-*,
   google-*,
   performance-*,

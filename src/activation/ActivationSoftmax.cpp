@@ -6,26 +6,26 @@
 #include <cstdint>
 
 void ActivationSoftmax::Forward(const MatrixIn& input_batch) {
-	inputs_ = input_batch;
-	outputs_ = input_batch.rowwise() - input_batch.colwise().maxCoeff();
-	outputs_ = outputs_.array().exp();
-	outputs_.array().rowwise() /= outputs_.colwise().sum().array();
+	Inputs() = input_batch;
+	Outputs() = input_batch.rowwise() - input_batch.colwise().maxCoeff();
+	Outputs() = Outputs().array().exp();
+	Outputs().array().rowwise() /= Outputs().colwise().sum().array();
 
-	assert(input_batch.rows() == outputs_.rows() &&
-		   input_batch.cols() == outputs_.cols());
+	assert(input_batch.rows() == Outputs().rows() &&
+		   input_batch.cols() == Outputs().cols());
 }
 
 void ActivationSoftmax::Backward(const MatrixIn& gradient_batch) {
-	inputs_gradient_.resizeLike(gradient_batch);
+	InputsGradient().resizeLike(gradient_batch);
 	for (int64_t i{}; i < gradient_batch.cols(); ++i) {
-		Vector s{outputs_.col(i)};
+		Vector s{Outputs().col(i)};
 
 		Matrix jacobian{Matrix(s.asDiagonal())};
 		jacobian.noalias() -= s * s.transpose();
 
-		inputs_gradient_.col(i).noalias() = jacobian * gradient_batch.col(i);
+		InputsGradient().col(i).noalias() = jacobian * gradient_batch.col(i);
 	}
 
-	assert(inputs_gradient_.rows() == gradient_batch.rows() &&
-		   inputs_gradient_.cols() == gradient_batch.cols());
+	assert(InputsGradient().rows() == gradient_batch.rows() &&
+		   InputsGradient().cols() == gradient_batch.cols());
 }

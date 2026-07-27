@@ -23,8 +23,8 @@ Network NetworkBuilder::Build() const {
 	Network network{GetLossFuncObj()};
 
 	for (int64_t i{}; i < config_.GetSize() - 1; ++i)
-		network.AddLayer(NeuronalLayer{config_.GetNeuralLayer()[i],
-									   config_.GetNeuralLayer()[i + 1]},
+		network.AddLayer(NeuronalLayer{config_.GetNeuralLayer().at(i),
+									   config_.GetNeuralLayer().at(i + 1)},
 						 GetActivationFuncObj(i));
 
 	assert(network.GetNeuronalLayers().size() <
@@ -56,12 +56,13 @@ std::unique_ptr<AActivation> NetworkBuilder::GetActivationFuncObj(
 		   index < static_cast<int64_t>(config_.GetActivationFunc().size()));
 
 	switch (config_.GetActivationFunc()[index]) {
-		case AActivation::ActivationFuncType::kRelu:
-			return std::make_unique<ActivationReLU>();
-		case AActivation::ActivationFuncType::kSoftmax:
-			return std::make_unique<ActivationSoftmax>();
-		default:
-			assert(false);
-			throw std::runtime_error("Activation function not valid");
+		switch (config_.GetActivationFunc().at(index)) {
+			case AActivation::ActivationFuncType::kRelu:
+				return std::make_unique<ActivationReLU>();
+			case AActivation::ActivationFuncType::kSoftmax:
+				return std::make_unique<ActivationSoftmax>();
+			default:
+				assert(false);
+				throw std::runtime_error("Activation function not valid");
+		}
 	}
-}

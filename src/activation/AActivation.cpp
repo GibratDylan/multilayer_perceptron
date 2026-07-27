@@ -6,11 +6,11 @@
 #include <string_view>
 
 MatrixIn AActivation::GetOutputs() const noexcept {
-	return outputs_;
+	return Outputs();
 }
 
 MatrixIn AActivation::GetInputsGradient() const noexcept {
-	return inputs_gradient_;
+	return InputsGradient();
 }
 
 AActivation::ActivationFuncType AActivation::GetActivationType(

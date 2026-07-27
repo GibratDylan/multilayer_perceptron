@@ -16,18 +16,7 @@
 #include <vector>
 
 Config::Config(std::string_view path)
-	: size_{},
-	  input_size_{},
-	  epochs_{},
-	  batch_size_{},
-	  learning_rate_{},
-	  loss_func_{ALoss::LossFuncType::kNone},
-	  path_(path),
-	  seen_epochs_{},
-	  seen_learning_rate_{},
-	  seen_batch_size_{},
-	  seen_input_size_{},
-	  seen_loss_func_{} {}
+	: loss_func_{ALoss::LossFuncType::kNone}, path_(path) {}
 
 bool Config::Parse() {
 	assert(!path_.empty());
@@ -64,15 +53,15 @@ bool Config::ParseSingleValue(bool* seen, const Tokens& tokens,
 	assert(!tokens.empty());
 	if (*seen) {
 		return config_utils::ReportError(
-			line_number, "duplicate '" + std::string(tokens[0]) + "' entry");
+			line_number, "duplicate '" + std::string(tokens.at(0)) + "' entry");
 	}
 
 	if (tokens.size() != 2) {
 		return config_utils::ReportError(
-			line_number, "invalid '" + std::string(tokens[0]) + "' format");
+			line_number, "invalid '" + std::string(tokens.at(0)) + "' format");
 	}
 
-	if (!(this->*parse_and_set)(tokens[1], line_number)) return false;
+	if (!(this->*parse_and_set)(tokens.at(1), line_number)) return false;
 
 	*seen = true;
 	return true;
@@ -157,16 +146,16 @@ bool Config::ParseLayer(const Tokens& tokens, int64_t line_number) {
 		return config_utils::ReportError(line_number, "invalid 'layer' format");
 	}
 	int64_t output_size{};
-	if (!config_utils::ParseSigned(tokens[1], &output_size) ||
+	if (!config_utils::ParseSigned(tokens.at(1), &output_size) ||
 		output_size <= 0) {
 		return config_utils::ReportError(line_number, "invalid 'layer' sizes");
 	}
-	if (!IsActivationFuncValid(tokens[2])) {
+	if (!IsActivationFuncValid(tokens.at(2))) {
 		return config_utils::ReportError(line_number,
 										 "invalid activation function");
 	}
 	neuronal_layers_.push_back(output_size);
-	activation_func_.push_back(AActivation::GetActivationType(tokens[2]));
+	activation_func_.push_back(AActivation::GetActivationType(tokens.at(2)));
 	size_++;
 	return true;
 }

@@ -13,7 +13,7 @@
 #include <vector>
 
 Network::Network(std::unique_ptr<ALoss>&& loss_func)
-	: loss_func_(std::move(loss_func)), size_{} {}
+	: loss_func_(std::move(loss_func)) {}
 
 Network& Network::AddLayer(NeuronalLayer&& neuronal_layer,
 						   std::unique_ptr<AActivation>&& activation_func) {
@@ -35,7 +35,7 @@ Network& Network::AddLayer(NeuronalLayer&& neuronal_layer,
 }
 
 void Network::ForwardPass(const MatrixIn& input_batch,
-						   const IntVectorIn& targets_batch) {
+						  const IntVectorIn& targets_batch) {
 	assert(size_ > 0);
 	assert(loss_func_ != nullptr);
 	assert(targets_batch.size() > 0 && input_batch.size() > 0);
@@ -45,9 +45,11 @@ void Network::ForwardPass(const MatrixIn& input_batch,
 	activation_func_.front()->Forward(neuronal_layers_.front().GetOutputs());
 
 	for (Eigen::Index index{1}; index < size_; ++index) {
-		neuronal_layers_[index].Forward(
-			activation_func_[index - 1]->GetOutputs());
-		activation_func_[index]->Forward(neuronal_layers_[index].GetOutputs());
+		const std::size_t layer_index{static_cast<std::size_t>(index)};
+		neuronal_layers_.at(layer_index)
+			.Forward(activation_func_.at(layer_index - 1)->GetOutputs());
+		activation_func_.at(layer_index)
+			->Forward(neuronal_layers_.at(layer_index).GetOutputs());
 	}
 
 	loss_func_->Forward(activation_func_.back()->GetOutputs(), targets_batch);
@@ -63,10 +65,11 @@ void Network::BackwardPass(const IntVectorIn& targets_batch) {
 	activation_func_.back()->Backward(loss_func_->GetInputsGradient());
 
 	for (Eigen::Index index{size_ - 1}; index > 0; --index) {
-		neuronal_layers_[index].Backward(
-			activation_func_[index]->GetInputsGradient());
-		activation_func_[index - 1]->Backward(
-			neuronal_layers_[index].GetInputsGradient());
+		const std::size_t layer_index{static_cast<std::size_t>(index)};
+		neuronal_layers_.at(layer_index)
+			.Backward(activation_func_.at(layer_index)->GetInputsGradient());
+		activation_func_.at(layer_index - 1)
+			->Backward(neuronal_layers_.at(layer_index).GetInputsGradient());
 	}
 
 	neuronal_layers_.front().Backward(

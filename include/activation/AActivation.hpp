@@ -15,12 +15,6 @@ class AActivation {
    public:
 	enum class ActivationFuncType : uint8_t { kRelu, kSoftmax, kNone };
 
-   protected:
-	Matrix outputs_{};
-	Matrix inputs_{};
-
-	Matrix inputs_gradient_{};
-
    public:
 	AActivation(const AActivation&) = delete;
 	AActivation(AActivation&&) noexcept = delete;
@@ -41,4 +35,22 @@ class AActivation {
 
    protected:
 	AActivation() = default;
+
+	Matrix& Outputs() noexcept { return outputs_; }
+
+	const Matrix& Outputs() const noexcept { return outputs_; }
+
+	Matrix& Inputs() noexcept { return inputs_; }
+
+	const Matrix& Inputs() const noexcept { return inputs_; }
+
+	Matrix& InputsGradient() noexcept { return inputs_gradient_; }
+
+	const Matrix& InputsGradient() const noexcept { return inputs_gradient_; }
+
+   private:
+	Matrix outputs_{};
+	Matrix inputs_{};
+
+	Matrix inputs_gradient_{};
 };

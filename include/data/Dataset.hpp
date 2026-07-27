@@ -40,7 +40,7 @@ class Dataset {
 
 			for (int64_t index{}, start_pos{pos_}; start_pos < end_pos;
 				 ++start_pos, ++index) {
-				int64_t pos{parent_ptr_->indices_[start_pos]};
+				int64_t pos{parent_ptr_->indices_.at(start_pos)};
 
 				batch.col(index) = parent_ptr_->dataset_.col(pos);
 				target.row(index) = parent_ptr_->target_data_.row(pos);
@@ -63,8 +63,8 @@ class Dataset {
 	};
 
    private:
-	const Matrix dataset_{};
-	const IntVector target_data_{};
+	Matrix dataset_{};
+	IntVector target_data_{};
 	std::vector<int64_t> indices_{};
 	int64_t batch_size_{};
 

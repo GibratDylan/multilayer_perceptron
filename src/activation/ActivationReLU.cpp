@@ -6,22 +6,22 @@
 #include <cstdint>
 
 void ActivationReLU::Forward(const MatrixIn& input_batch) {
-	inputs_ = input_batch;
-	outputs_ = input_batch.cwiseMax(0.F);
+	Inputs() = input_batch;
+	Outputs() = input_batch.cwiseMax(0.F);
 
-	assert(input_batch.rows() == outputs_.rows() &&
-		   input_batch.cols() == outputs_.cols());
-	assert(outputs_.minCoeff() >= 0.F);
+	assert(input_batch.rows() == Outputs().rows() &&
+		   input_batch.cols() == Outputs().cols());
+	assert(Outputs().minCoeff() >= 0.F);
 }
 
 void ActivationReLU::Backward(const MatrixIn& gradient_batch) {
-	inputs_gradient_ = gradient_batch;
-	for (int64_t i{}, size{inputs_gradient_.size()}; i < size; ++i) {
-		Matrix::Scalar temporary{(*(inputs_.data() + i))};
+	InputsGradient() = gradient_batch;
+	for (int64_t i{}, size{InputsGradient().size()}; i < size; ++i) {
+		Matrix::Scalar temporary{Inputs().coeff(i)};
 
-		if (temporary < 0) *(inputs_gradient_.data() + i) = 0.F;
+		if (temporary < 0) InputsGradient().coeffRef(i) = 0.F;
 	}
 
-	assert(inputs_gradient_.rows() == gradient_batch.rows() &&
-		   inputs_gradient_.cols() == gradient_batch.cols());
+	assert(InputsGradient().rows() == gradient_batch.rows() &&
+		   InputsGradient().cols() == gradient_batch.cols());
 }

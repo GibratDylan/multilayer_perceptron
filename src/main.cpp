@@ -10,13 +10,6 @@ int main(int argc, const char** argv) {
 		return 1;
 	}
 
-	Dataset test{csv::CsvLoader(argv[1])};
-
-	auto pair{csv::DatasetSplit(test, 0.1)};
-
-	csv::CsvDumper("test1", "", pair.first);
-	csv::CsvDumper("test2", "", pair.second);
-
 	// Config config{std::string{argv[1]}};
 	// if (!config.Parse()) return 1;
 
@@ -45,6 +38,13 @@ int main(int argc, const char** argv) {
 
 	// trainer.Train(network, dataset, config);
 
+	Dataset test{csv::CsvLoader(std::string{argv[1]})};
+
+	constexpr float kSplitRatio{0.1F};
+	auto pair{csv::DatasetSplit(test, kSplitRatio)};
+
+	csv::CsvDumper("test1", "", pair.first);
+	csv::CsvDumper("test2", "", pair.second);
 
 	return 0;
 }

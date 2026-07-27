@@ -10,7 +10,7 @@
 
 class NetworkBuilder {
    private:
-	const Config config_;
+	Config config_;
 
    public:
 	explicit NetworkBuilder(Config config);

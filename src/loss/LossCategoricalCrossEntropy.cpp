@@ -12,7 +12,7 @@ void LossCategoricalCrossEntropy::Forward(const MatrixIn& logits_batch,
 		   targets_batch.maxCoeff() <= logits_batch.rows());
 	assert(logits_batch.size() > 0 && targets_batch.size() > 0);
 
-	inputs_ = logits_batch;
+	Inputs() = logits_batch;
 
 	Vector correct_confidences(targets_batch.size());
 	for (int64_t batch_index{}; batch_index < targets_batch.size();
@@ -22,31 +22,32 @@ void LossCategoricalCrossEntropy::Forward(const MatrixIn& logits_batch,
 	}
 
 	assert(correct_confidences.size() > 0);
+	constexpr float kClampEpsilon{1e-7F};
 
 	for (auto& correct_confidence : correct_confidences)
-		correct_confidence =
-			std::max(1e-7F, std::min(1.F - 1e-7F, correct_confidence));
+		correct_confidence = std::max(
+			kClampEpsilon, std::min(1.F - kClampEpsilon, correct_confidence));
 
-	outputs_ = -(correct_confidences.array().log());
+	Outputs() = -(correct_confidences.array().log());
 
-	assert(outputs_.rows() == targets_batch.rows());
+	assert(Outputs().rows() == targets_batch.rows());
 }
 
 void LossCategoricalCrossEntropy::Backward(IntVectorIn targets_batch) {
-	assert(inputs_.cols() == targets_batch.rows() &&
-		   targets_batch.maxCoeff() <= inputs_.rows());
-	assert(inputs_.size() > 0 && targets_batch.size() > 0);
+	assert(Inputs().cols() == targets_batch.rows() &&
+		   targets_batch.maxCoeff() <= Inputs().rows());
+	assert(Inputs().size() > 0 && targets_batch.size() > 0);
 
-	inputs_gradient_.resizeLike(inputs_);
-	inputs_gradient_.setZero();
-	for (int64_t i{}; i < inputs_.cols(); ++i) {
+	InputsGradient().resizeLike(Inputs());
+	InputsGradient().setZero();
+	for (int64_t i{}; i < Inputs().cols(); ++i) {
 		int64_t label{targets_batch(i)};
-		float predictive_input{
-			std::max(1e-7F, std::min(1.F - 1e-7F, inputs_(label, i)))};
-		inputs_gradient_(label, i) = -1.F / predictive_input;
+		float predictive_input{std::max(
+			kClampEpsilon, std::min(1.F - kClampEpsilon, Inputs()(label, i)))};
+		InputsGradient()(label, i) = -1.F / predictive_input;
 	}
-	inputs_gradient_ /= static_cast<float>(inputs_.cols());
+	InputsGradient() /= static_cast<float>(Inputs().cols());
 
-	assert(inputs_gradient_.rows() == inputs_.rows() &&
-		   inputs_gradient_.cols() == inputs_.cols());
+	assert(InputsGradient().rows() == Inputs().rows() &&
+		   InputsGradient().cols() == Inputs().cols());
 }
