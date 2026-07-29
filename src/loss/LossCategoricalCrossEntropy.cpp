@@ -22,7 +22,6 @@ void LossCategoricalCrossEntropy::Forward(const MatrixIn& logits_batch,
 	}
 
 	assert(correct_confidences.size() > 0);
-	constexpr float kClampEpsilon{1e-7F};
 
 	for (auto& correct_confidence : correct_confidences)
 		correct_confidence = std::max(

@@ -7,9 +7,9 @@
 #include <ostream>
 
 NeuronalLayer::NeuronalLayer(int64_t input_size, int64_t num_neurons)
-	: weights_{[] {
-		  constexpr float kWeightScale{0.1F};
-		  return Matrix::Random(num_neurons, input_size) * kWeightScale;
+	: weights_{[num_neurons, input_size] {
+		  constexpr float k_weight_scale{0.1F};
+		  return Matrix::Random(num_neurons, input_size) * k_weight_scale;
 	  }()},
 	  biases_(num_neurons) {
 	biases_.setZero();

@@ -15,9 +15,9 @@ class Result {
 	}
 
 	// NOLINTBEGIN(readability-identifier-naming)
-	const T& value() const noexcept { return std::get<T>(data_); }
+	const T& value() const { return std::get<T>(data_); }
 
-	const E& error() const noexcept { return std::get<E>(data_); }
+	const E& error() const { return std::get<E>(data_); }
 
 	// NOLINTEND(readability-identifier-naming)
 

@@ -54,6 +54,10 @@ void Dataset::SetBatchSize(int64_t batch_size) noexcept {
 	batch_size_ = batch_size;
 }
 
+int64_t Dataset::GetBatchSize() const noexcept {
+	return batch_size_;
+}
+
 int64_t Dataset::GetSize() const noexcept {
 	return dataset_.cols();
 }

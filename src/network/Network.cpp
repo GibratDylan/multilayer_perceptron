@@ -6,6 +6,7 @@
 #include "types/eigen_types.hpp"
 
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
 #include <memory>

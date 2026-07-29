@@ -55,14 +55,13 @@ std::unique_ptr<AActivation> NetworkBuilder::GetActivationFuncObj(
 			   std::numeric_limits<int64_t>::max() &&
 		   index < static_cast<int64_t>(config_.GetActivationFunc().size()));
 
-	switch (config_.GetActivationFunc()[index]) {
-		switch (config_.GetActivationFunc().at(index)) {
-			case AActivation::ActivationFuncType::kRelu:
-				return std::make_unique<ActivationReLU>();
-			case AActivation::ActivationFuncType::kSoftmax:
-				return std::make_unique<ActivationSoftmax>();
-			default:
-				assert(false);
-				throw std::runtime_error("Activation function not valid");
-		}
+	switch (config_.GetActivationFunc().at(index)) {
+		case AActivation::ActivationFuncType::kRelu:
+			return std::make_unique<ActivationReLU>();
+		case AActivation::ActivationFuncType::kSoftmax:
+			return std::make_unique<ActivationSoftmax>();
+		default:
+			assert(false);
+			throw std::runtime_error("Activation function not valid");
 	}
+}

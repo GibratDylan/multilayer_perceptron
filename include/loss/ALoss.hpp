@@ -48,6 +48,8 @@ class ALoss {
 
 	const Matrix& InputsGradient() const noexcept { return inputs_gradient_; }
 
+	static constexpr float kClampEpsilon{1e-7F};
+	
    private:
 	Vector outputs_{};
 	Matrix inputs_{};

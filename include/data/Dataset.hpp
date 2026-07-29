@@ -80,5 +80,6 @@ class Dataset {
 
 	void RandDataset();
 	void SetBatchSize(int64_t batch_size) noexcept;
+	int64_t GetBatchSize() const noexcept;
 	int64_t GetSize() const noexcept;
 };
