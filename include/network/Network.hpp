@@ -24,7 +24,7 @@ class Network {
 					  std::unique_ptr<AActivation>&& activation_func);
 
 	void ForwardPass(const MatrixIn& input_batch,
-					  const IntVectorIn& targets_batch);
+					 const IntVectorIn& targets_batch);
 	void BackwardPass(const IntVectorIn& targets_batch);
 
 	const std::vector<NeuronalLayer>& GetNeuronalLayers() const noexcept;

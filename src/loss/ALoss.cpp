@@ -1,5 +1,7 @@
 #include "loss/ALoss.hpp"
 
+#include "error/Result.hpp"
+#include "error/error.hpp"
 #include "types/eigen_types.hpp"
 
 #include <cassert>
@@ -19,10 +21,10 @@ MatrixIn ALoss::GetInputsGradient() const noexcept {
 	return InputsGradient();
 }
 
-ALoss::LossFuncType ALoss::GetLossType(std::string_view str) {
+Result<ALoss::LossFuncType, LossFuncError> ALoss::GetLossType(std::string_view str) {
 	if (str == loss_func_string::kCatCrossentropy)
-		return LossFuncType::kCatCrossentropy;
-	return LossFuncType::kNone;
+		return Result<ALoss::LossFuncType, LossFuncError>{LossFuncType::kCatCrossentropy};
+	return Result<ALoss::LossFuncType, LossFuncError>{LossFuncError::kNotValidLoss};
 }
 
 std::ostream& operator<<(std::ostream& os, const ALoss& rhs) {

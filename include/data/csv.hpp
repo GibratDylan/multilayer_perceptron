@@ -1,39 +1,42 @@
 #pragma once
 
 #include "data/Dataset.hpp"
+#include "error/Result.hpp"
+#include "error/error.hpp"
 
 #include <cstdint>
 #include <fstream>
-#include <iostream>
-#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <utility>
+#include <variant>
 
 namespace csv {
-bool GetCsvSize(const std::string& path, int64_t& rows, int64_t& cols);
-Dataset CsvLoader(const std::string& path);
+Result<std::pair<int64_t, int64_t>, CsvError> GetCsvSize(
+	const std::string& path);
+Result<Dataset, CsvError> CsvLoader(const std::string& path);
 std::pair<Dataset, Dataset> DatasetSplit(Dataset& dataset, float ratio);
-void CsvDumper(const std::string& path, std::string_view header,
-			   Dataset& dataset);
+Result<std::monostate, CsvError> CsvDumper(const std::string& path,
+										   std::string_view header,
+										   Dataset& dataset);
+
+std::string_view CsvErrorMessage(CsvError error) noexcept;
 
 class WriteToCsv {
    private:
 	std::ofstream csv_file_{};
 
-   public:
-	explicit WriteToCsv(const std::string& path, std::string_view header)
-		: csv_file_{path, std::ios::out | std::ios::trunc} {
-		
-			if (!csv_file_.is_open()) {
-			throw std::runtime_error("CSV at " + path + " can't be create");
-		}
+	explicit WriteToCsv(std::ofstream&& csv_file)
+		: csv_file_{std::move(csv_file)} {}
 
-		csv_file_ << header << '\n';
-	}
+   public:
+	explicit WriteToCsv() = delete;
+
+	static Result<WriteToCsv, CsvError> Create(const std::string& path,
+											   std::string_view header);
 
 	template <typename... Args>
-	void Write(const Args&... args) {
+	Result<std::monostate, CsvError> Write(const Args&... args) {
 		bool first{true};
 
 		auto write_arg = [&](const auto& arg) {
@@ -45,8 +48,12 @@ class WriteToCsv {
 		};
 
 		(write_arg(args), ...);
-		
+
 		csv_file_ << '\n';
+		if (!csv_file_)
+			return Result<std::monostate, CsvError>{CsvError::kCannotWrite};
+
+		return Result<std::monostate, CsvError>{std::monostate{}};
 	}
 };
 }  // namespace csv

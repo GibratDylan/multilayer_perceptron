@@ -1,6 +1,8 @@
 #pragma once
 
 #include "types/eigen_types.hpp"
+#include "error/error.hpp"
+#include "error/Result.hpp"
 
 #include <cstdint>
 #include <ostream>
@@ -12,11 +14,11 @@ inline constexpr std::string_view kCatCrossentropy{"categorical_cross_entropy"};
 
 class ALoss {
    public:
-	enum class LossFuncType : uint8_t { kCatCrossentropy, kNone };
+	enum class LossFuncType : uint8_t { kCatCrossentropy };
 
    public:
-	ALoss(const ALoss&) = delete;
-	ALoss(ALoss&&) noexcept = delete;
+	explicit ALoss(const ALoss&) = delete;
+	explicit ALoss(ALoss&&) noexcept = delete;
 	ALoss& operator=(const ALoss&) = delete;
 	ALoss& operator=(ALoss&&) noexcept = delete;
 	virtual ~ALoss() = default;
@@ -29,12 +31,12 @@ class ALoss {
 	MatrixIn GetInputsGradient() const noexcept;
 	float GetLoss() const noexcept;
 
-	static ALoss::LossFuncType GetLossType(std::string_view str);
+	static Result<LossFuncType, LossFuncError> GetLossType(std::string_view str);
 
 	friend std::ostream& operator<<(std::ostream& os, const ALoss& rhs);
 
    protected:
-	ALoss() = default;
+	explicit ALoss() = default;
 
 	Vector& Outputs() noexcept { return outputs_; }
 

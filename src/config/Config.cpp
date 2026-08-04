@@ -16,7 +16,7 @@
 #include <vector>
 
 Config::Config(std::string_view path)
-	: loss_func_{ALoss::LossFuncType::kNone}, path_(path) {}
+	: path_(path) {}
 
 bool Config::Parse() {
 	assert(!path_.empty());
@@ -37,7 +37,7 @@ void Config::Reset() {
 	epochs_ = 0;
 	batch_size_ = 0;
 	learning_rate_ = 0.0F;
-	loss_func_ = ALoss::LossFuncType::kNone;
+	loss_func_ = {};
 
 	seen_epochs_ = false;
 	seen_learning_rate_ = false;
@@ -124,10 +124,10 @@ bool Config::ParseInputSize(std::string_view token, int64_t line_number) {
 }
 
 bool Config::ParseLossFunc(std::string_view token, int64_t line_number) {
-	if (!IsLossFuncValid(token)) {
+	auto result = ALoss::GetLossType(token);
+	if (!result)
 		return config_utils::ReportError(line_number, "invalid 'loss' value");
-	}
-	loss_func_ = ALoss::GetLossType(token);
+	loss_func_ = result.value();
 	return true;
 }
 
@@ -150,12 +150,12 @@ bool Config::ParseLayer(const Tokens& tokens, int64_t line_number) {
 		output_size <= 0) {
 		return config_utils::ReportError(line_number, "invalid 'layer' sizes");
 	}
-	if (!IsActivationFuncValid(tokens.at(2))) {
+	auto result = AActivation::GetActivationType(tokens.at(2));
+	if (!result)
 		return config_utils::ReportError(line_number,
 										 "invalid activation function");
-	}
 	neuronal_layers_.push_back(output_size);
-	activation_func_.push_back(AActivation::GetActivationType(tokens.at(2)));
+	activation_func_.push_back(result.value());
 	size_++;
 	return true;
 }
@@ -205,15 +205,6 @@ bool Config::ParseLines(std::ifstream& file) {
 	return true;
 }
 
-bool Config::IsLossFuncValid(std::string_view string) {
-	return ALoss::GetLossType(string) != ALoss::LossFuncType::kNone;
-}
-
-bool Config::IsActivationFuncValid(std::string_view string) {
-	return AActivation::GetActivationType(string) !=
-		   AActivation::ActivationFuncType::kNone;
-}
-
 bool Config::IsConfigValid() const noexcept {
 	if (epochs_ <= 0 || !seen_epochs_) return false;
 	if (batch_size_ <= 0 || !seen_batch_size_) return false;
@@ -221,8 +212,7 @@ bool Config::IsConfigValid() const noexcept {
 	if (!std::isfinite(learning_rate_) || learning_rate_ <= 0.0F ||
 		!seen_learning_rate_)
 		return false;
-	if (loss_func_ == ALoss::LossFuncType::kNone || !seen_loss_func_)
-		return false;
+	if (!seen_loss_func_) return false;
 	if (neuronal_layers_.empty()) return false;
 	if (size_ <= 0) return false;
 	if (activation_func_.size() != static_cast<size_t>(size_ - 1)) return false;

@@ -4,8 +4,8 @@
 
 class ITrainerObserver {
    public:
-	ITrainerObserver(const ITrainerObserver&) = delete;
-	ITrainerObserver(ITrainerObserver&&) noexcept = delete;
+	explicit ITrainerObserver(const ITrainerObserver&) = delete;
+	explicit ITrainerObserver(ITrainerObserver&&) noexcept = delete;
 	ITrainerObserver& operator=(const ITrainerObserver&) = delete;
 	ITrainerObserver& operator=(ITrainerObserver&&) noexcept = delete;
 
@@ -14,5 +14,5 @@ class ITrainerObserver {
 							float accuracy) = 0;
 
    protected:
-	ITrainerObserver() = default;
+	explicit ITrainerObserver() = default;
 };

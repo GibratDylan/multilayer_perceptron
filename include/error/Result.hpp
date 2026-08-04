@@ -15,6 +15,8 @@ class Result {
 	}
 
 	// NOLINTBEGIN(readability-identifier-naming)
+	T& value() { return std::get<T>(data_); }
+
 	const T& value() const { return std::get<T>(data_); }
 
 	const E& error() const { return std::get<E>(data_); }

@@ -1,26 +1,15 @@
-#include "data/Dataset.hpp"
-#include "data/csv.hpp"
+#include "mode/ProgramModeFactory.hpp"
 
 #include <exception>
 #include <iostream>
 #include <string_view>
 #include <vector>
 
-// class ProgramType
-// --predictive <model_serialized> <predictive_data>
-// --training <training_data>
-// --split <data>
-// --show <metrics>
 int main(const int argc, const char** argv) {
 	try {
 		// NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 		std::vector<std::string_view> args(argv, argv + argc);
 		// NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-
-		if (args.size() != 2) {
-			std::cerr << "Program need config file: ./mlp path/to/config.txt\n";
-			return 1;
-		}
 
 		// Config config{std::string{argv[1]}};
 		// if (!config.Parse()) return 1;
@@ -50,13 +39,22 @@ int main(const int argc, const char** argv) {
 
 		// trainer.Train(network, dataset, config);
 
-		Dataset test{csv::CsvLoader(std::string{args.at(1)})};
+		// Dataset test{csv::CsvLoader(std::string{args.at(1)})};
 
-		constexpr float k_split_ratio{0.1F};
-		auto pair{csv::DatasetSplit(test, k_split_ratio)};
+		// constexpr float k_split_ratio{0.1F};
+		// auto pair{csv::DatasetSplit(test, k_split_ratio)};
 
-		csv::CsvDumper("data/test1.csv", "", pair.first);
-		csv::CsvDumper("data/test2.csv", "", pair.second);
+		// csv::CsvDumper("data/test1.csv", "", pair.first);
+		// csv::CsvDumper("data/test2.csv", "", pair.second);
+
+		ProgramModeFactory factory{args};
+
+		auto result = factory.Create(args);
+		if (result) {
+			result.value()->Run();
+		} else {
+			return 1;
+		}
 
 	} catch (std::exception& e) {
 		std::cerr << e.what() << '\n';

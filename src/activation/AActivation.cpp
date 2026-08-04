@@ -1,5 +1,7 @@
 #include "activation/AActivation.hpp"
 
+#include "error/Result.hpp"
+#include "error/error.hpp"
 #include "types/eigen_types.hpp"
 
 #include <ostream>
@@ -13,12 +15,12 @@ MatrixIn AActivation::GetInputsGradient() const noexcept {
 	return InputsGradient();
 }
 
-AActivation::ActivationFuncType AActivation::GetActivationType(
-	std::string_view str) {
-	if (str == activation_func_string::kRelu) return ActivationFuncType::kRelu;
+Result<AActivation::ActivationFuncType, ActivationFuncError> AActivation::GetActivationType(
+	std::string_view str) noexcept {
+	if (str == activation_func_string::kRelu) return Result<ActivationFuncType, ActivationFuncError>{ActivationFuncType::kRelu};
 	if (str == activation_func_string::kSoftmax)
-		return ActivationFuncType::kSoftmax;
-	return ActivationFuncType::kNone;
+		return Result<ActivationFuncType, ActivationFuncError>{ActivationFuncType::kSoftmax};
+	return Result<ActivationFuncType, ActivationFuncError>{ActivationFuncError::kNotValidActivationFunc};
 }
 
 std::ostream& operator<<(std::ostream& os, const AActivation& rhs) {

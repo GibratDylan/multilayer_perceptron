@@ -1,5 +1,7 @@
 #pragma once
 
+#include "error/Result.hpp"
+#include "error/error.hpp"
 #include "types/eigen_types.hpp"
 
 #include <cstdint>
@@ -13,23 +15,21 @@ inline constexpr std::string_view kSoftmax{"softmax"};
 
 class AActivation {
    public:
-	enum class ActivationFuncType : uint8_t { kRelu, kSoftmax, kNone };
+	enum class ActivationFuncType : uint8_t { kRelu, kSoftmax };
 
    public:
-	AActivation(const AActivation&) = delete;
-	AActivation(AActivation&&) noexcept = delete;
+	explicit AActivation(const AActivation&) = delete;
+	explicit AActivation(AActivation&&) noexcept = delete;
 	AActivation& operator=(const AActivation&) = delete;
 	AActivation& operator=(AActivation&&) noexcept = delete;
 	virtual ~AActivation() = default;
 
 	virtual void Forward(const MatrixIn& input_batch) = 0;
 	virtual void Backward(const MatrixIn& gradient_batch) = 0;
-
 	MatrixIn GetOutputs() const noexcept;
 	MatrixIn GetInputsGradient() const noexcept;
-
-	static AActivation::ActivationFuncType GetActivationType(
-		std::string_view str);
+	static Result<ActivationFuncType, ActivationFuncError> GetActivationType(
+		std::string_view str) noexcept;
 
 	friend std::ostream& operator<<(std::ostream& os, const AActivation& rhs);
 

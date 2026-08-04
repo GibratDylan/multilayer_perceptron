@@ -46,6 +46,10 @@ add_executable(${PROJECT_NAME}
 	${SRCS_DIR}/config/config_utils.cpp
 	${SRCS_DIR}/data/Dataset.cpp
 	${SRCS_DIR}/data/csv.cpp
+	${SRCS_DIR}/mode/ProgramModeFactory.cpp
+	${SRCS_DIR}/mode/PredictiveMode.cpp
+	${SRCS_DIR}/mode/TrainingMode.cpp
+	${SRCS_DIR}/mode/SplitMode.cpp
 
 	${HEADERS_DIR}/layer/NeuronalLayer.hpp
 	${HEADERS_DIR}/activation/AActivation.hpp
@@ -67,7 +71,11 @@ add_executable(${PROJECT_NAME}
 	${HEADERS_DIR}/data/Dataset.hpp
 	${HEADERS_DIR}/data/csv.hpp
 	${HEADERS_DIR}/error/Result.hpp
-	${HEADERS_DIR}/error/error.hpp
+	${HEADERS_DIR}/mode/IProgramMode.hpp
+	${HEADERS_DIR}/mode/ProgramModeFactory.hpp
+	${HEADERS_DIR}/mode/PredictiveMode.hpp
+	${HEADERS_DIR}/mode/TrainingMode.hpp
+	${HEADERS_DIR}/mode/SplitMode.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

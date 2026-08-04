@@ -72,7 +72,4 @@ class Config {
 	bool ParseLayer(const Tokens& tokens, int64_t line_number);
 
 	Handlers BuildHandlers();
-
-	static bool IsActivationFuncValid(std::string_view string);
-	static bool IsLossFuncValid(std::string_view string);
 };
