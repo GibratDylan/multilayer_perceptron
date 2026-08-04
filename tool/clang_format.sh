@@ -133,13 +133,10 @@ fi
 
 echo "[clang-format] Running on ${#FILES[@]} file(s)" >&2
 
-EXIT_CODE=0
 for file in "${FILES[@]}"; do
   if [[ ! -f "$file" ]]; then
     echo "[clang-format] Skip missing: $file" >&2
     continue
   fi
-  clang-format "${FORMAT_ARGS[@]}" "$file" || EXIT_CODE=$?
+  clang-format "${FORMAT_ARGS[@]}" "$file"
 done
-
-exit "$EXIT_CODE"

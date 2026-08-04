@@ -21,10 +21,13 @@ MatrixIn ALoss::GetInputsGradient() const noexcept {
 	return InputsGradient();
 }
 
-Result<ALoss::LossFuncType, LossFuncError> ALoss::GetLossType(std::string_view str) {
+Result<ALoss::LossFuncType, LossFuncError> ALoss::LossType(
+	std::string_view str) noexcept {
 	if (str == loss_func_string::kCatCrossentropy)
-		return Result<ALoss::LossFuncType, LossFuncError>{LossFuncType::kCatCrossentropy};
-	return Result<ALoss::LossFuncType, LossFuncError>{LossFuncError::kNotValidLoss};
+		return Result<ALoss::LossFuncType, LossFuncError>{
+			LossFuncType::kCatCrossentropy};
+	return Result<ALoss::LossFuncType, LossFuncError>{
+		LossFuncError::kNotValidLoss};
 }
 
 std::ostream& operator<<(std::ostream& os, const ALoss& rhs) {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "types/eigen_types.hpp"
-#include "error/error.hpp"
 #include "error/Result.hpp"
+#include "error/error.hpp"
+#include "types/eigen_types.hpp"
 
 #include <cstdint>
 #include <ostream>
@@ -26,12 +26,14 @@ class ALoss {
 	virtual void Forward(const MatrixIn& logits_batch,
 						 IntVectorIn targets_batch) = 0;
 	virtual void Backward(IntVectorIn targets_batch) = 0;
+	virtual LossFuncType GetLossType() const noexcept = 0;
 
 	VectorIn GetOutputs() const noexcept;
 	MatrixIn GetInputsGradient() const noexcept;
 	float GetLoss() const noexcept;
 
-	static Result<LossFuncType, LossFuncError> GetLossType(std::string_view str);
+	static Result<LossFuncType, LossFuncError> LossType(
+		std::string_view str) noexcept;
 
 	friend std::ostream& operator<<(std::ostream& os, const ALoss& rhs);
 
@@ -51,7 +53,7 @@ class ALoss {
 	const Matrix& InputsGradient() const noexcept { return inputs_gradient_; }
 
 	static constexpr float kClampEpsilon{1e-7F};
-	
+
    private:
 	Vector outputs_{};
 	Matrix inputs_{};

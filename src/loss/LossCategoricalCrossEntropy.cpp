@@ -1,5 +1,6 @@
 #include "loss/LossCategoricalCrossEntropy.hpp"
 
+#include "loss/ALoss.hpp"
 #include "types/eigen_types.hpp"
 
 #include <algorithm>
@@ -49,4 +50,8 @@ void LossCategoricalCrossEntropy::Backward(IntVectorIn targets_batch) {
 
 	assert(InputsGradient().rows() == Inputs().rows() &&
 		   InputsGradient().cols() == Inputs().cols());
+}
+
+ALoss::LossFuncType LossCategoricalCrossEntropy::GetLossType() const noexcept {
+	return LossFuncType::kCatCrossentropy;
 }

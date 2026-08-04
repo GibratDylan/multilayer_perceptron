@@ -1,5 +1,6 @@
 #include "activation/ActivationSoftmax.hpp"
 
+#include "activation/AActivation.hpp"
 #include "types/eigen_types.hpp"
 
 #include <cassert>
@@ -28,4 +29,9 @@ void ActivationSoftmax::Backward(const MatrixIn& gradient_batch) {
 
 	assert(InputsGradient().rows() == gradient_batch.rows() &&
 		   InputsGradient().cols() == gradient_batch.cols());
+}
+
+AActivation::ActivationFuncType ActivationSoftmax::GetActivationType()
+	const noexcept {
+	return ActivationFuncType::kSoftmax;
 }

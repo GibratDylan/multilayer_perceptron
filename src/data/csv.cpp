@@ -11,10 +11,13 @@
 #include <cstddef>
 #include <cstdint>
 #include <fstream>
+#include <ios>
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <system_error>
 #include <utility>
+#include <variant>
 
 namespace csv {
 Result<std::pair<int64_t, int64_t>, CsvError> GetCsvSize(
@@ -110,8 +113,8 @@ Result<Dataset, CsvError> CsvLoader(const std::string& path) {
 std::pair<Dataset, Dataset> DatasetSplit(Dataset& dataset, float ratio) {
 	assert(ratio < 1 && ratio > 0);
 
-	const int64_t size{
-		static_cast<int64_t>(static_cast<float>(dataset.GetSize()) * ratio)};
+	const int64_t size{static_cast<int64_t>(
+		static_cast<float>(dataset.GetSizeCols()) * ratio)};
 
 	const int64_t saved_batch{dataset.GetBatchSize()};
 	dataset.SetBatchSize(size);
@@ -120,7 +123,7 @@ std::pair<Dataset, Dataset> DatasetSplit(Dataset& dataset, float ratio) {
 
 	Dataset first{(*it).first, (*it).second};
 	++it;
-	dataset.SetBatchSize(dataset.GetSize() - size);
+	dataset.SetBatchSize(dataset.GetSizeCols() - size);
 	Dataset second{(*it).first, (*it).second};
 
 	dataset.SetBatchSize(saved_batch);
@@ -156,9 +159,9 @@ Result<std::monostate, CsvError> CsvDumper(const std::string& path,
 				auto result{
 					std::to_chars(buff.begin(), buff.end(), batch(cols))};
 				++cols;
-				if (result.ec == std::errc{})
+				if (result.ec == std::errc{}) {
 					csv_line.append(buff.begin(), result.ptr - buff.begin());
-				else {
+				} else {
 					dataset.SetBatchSize(saved_batch);
 					return Result<std::monostate, CsvError>{
 						CsvError::kCannotWrite};

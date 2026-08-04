@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <iostream>
 #include <ostream>
 
 NeuronalLayer::NeuronalLayer(int64_t input_size, int64_t num_neurons)

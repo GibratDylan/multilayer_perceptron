@@ -1,7 +1,6 @@
 epochs 100
 learning_rate 0.01
 batch_size 10
-input_size 2
 layer 64 relu
 # layer 2048 relu
 # layer 2048 relu

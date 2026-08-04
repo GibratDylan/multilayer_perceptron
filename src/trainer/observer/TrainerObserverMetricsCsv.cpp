@@ -3,6 +3,7 @@
 #include "data/csv.hpp"
 
 #include <cstdint>
+#include <stdexcept>
 #include <string>
 
 void TrainerObserverMetricsCsv::OnEpochEnd(int64_t epoch_index, float loss,

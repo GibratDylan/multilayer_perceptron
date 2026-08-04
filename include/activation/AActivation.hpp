@@ -26,9 +26,11 @@ class AActivation {
 
 	virtual void Forward(const MatrixIn& input_batch) = 0;
 	virtual void Backward(const MatrixIn& gradient_batch) = 0;
+	virtual ActivationFuncType GetActivationType() const noexcept = 0;
+
 	MatrixIn GetOutputs() const noexcept;
 	MatrixIn GetInputsGradient() const noexcept;
-	static Result<ActivationFuncType, ActivationFuncError> GetActivationType(
+	static Result<ActivationFuncType, ActivationFuncError> ActivationType(
 		std::string_view str) noexcept;
 
 	friend std::ostream& operator<<(std::ostream& os, const AActivation& rhs);

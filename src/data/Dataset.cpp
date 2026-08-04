@@ -58,6 +58,10 @@ int64_t Dataset::GetBatchSize() const noexcept {
 	return batch_size_;
 }
 
-int64_t Dataset::GetSize() const noexcept {
+int64_t Dataset::GetSizeCols() const noexcept {
 	return dataset_.cols();
+}
+
+int64_t Dataset::GetSizeRows() const noexcept {
+	return dataset_.rows();
 }

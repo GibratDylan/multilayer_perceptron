@@ -15,12 +15,16 @@ MatrixIn AActivation::GetInputsGradient() const noexcept {
 	return InputsGradient();
 }
 
-Result<AActivation::ActivationFuncType, ActivationFuncError> AActivation::GetActivationType(
-	std::string_view str) noexcept {
-	if (str == activation_func_string::kRelu) return Result<ActivationFuncType, ActivationFuncError>{ActivationFuncType::kRelu};
+Result<AActivation::ActivationFuncType, ActivationFuncError>
+AActivation::ActivationType(std::string_view str) noexcept {
+	if (str == activation_func_string::kRelu)
+		return Result<ActivationFuncType, ActivationFuncError>{
+			ActivationFuncType::kRelu};
 	if (str == activation_func_string::kSoftmax)
-		return Result<ActivationFuncType, ActivationFuncError>{ActivationFuncType::kSoftmax};
-	return Result<ActivationFuncType, ActivationFuncError>{ActivationFuncError::kNotValidActivationFunc};
+		return Result<ActivationFuncType, ActivationFuncError>{
+			ActivationFuncType::kSoftmax};
+	return Result<ActivationFuncType, ActivationFuncError>{
+		ActivationFuncError::kNotValidActivationFunc};
 }
 
 std::ostream& operator<<(std::ostream& os, const AActivation& rhs) {

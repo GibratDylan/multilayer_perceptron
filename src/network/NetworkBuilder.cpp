@@ -1,67 +1,37 @@
 #include "network/NetworkBuilder.hpp"
 
-#include "activation/AActivation.hpp"
-#include "activation/ActivationReLU.hpp"
-#include "activation/ActivationSoftmax.hpp"
 #include "config/Config.hpp"
-#include "loss/ALoss.hpp"
-#include "loss/LossCategoricalCrossEntropy.hpp"
 #include "network/Network.hpp"
 
 #include <cassert>
 #include <cstdint>
 #include <limits>
-#include <memory>
-#include <stdexcept>
 #include <utility>
 
-NetworkBuilder::NetworkBuilder(Config config) : config_{std::move(config)} {}
+NetworkBuilder::NetworkBuilder(Config config, int64_t input_size_data)
+	: config_{std::move(config)}, input_size_data_{input_size_data} {}
 
 Network NetworkBuilder::Build() const {
 	assert(config_.IsConfigValid());
 
-	Network network{GetLossFuncObj()};
+	Network network{Network::GetLossFuncObj(config_.GetLossFunc())};
 
-	for (int64_t i{}; i < config_.GetSize() - 1; ++i)
-		network.AddLayer(NeuronalLayer{config_.GetNeuralLayer().at(i),
-									   config_.GetNeuralLayer().at(i + 1)},
-						 GetActivationFuncObj(i));
+	for (int64_t i{}; i < config_.GetSize(); ++i) {
+		int64_t input_size{i ? config_.GetNeuralLayer().at(i - 1)
+							 : input_size_data_};
+
+		network.AddLayer(
+			NeuronalLayer{input_size, config_.GetNeuralLayer().at(i)},
+			Network::GetActivationFuncObj(config_.GetActivationFunc().at(i)));
+	}
 
 	assert(network.GetNeuronalLayers().size() <
 			   std::numeric_limits<int64_t>::max() &&
-		   config_.GetSize() >
+		   config_.GetSize() ==
 			   static_cast<int64_t>(network.GetNeuronalLayers().size()));
 
 	assert(network.GetNeuronalLayers().size() ==
 		   network.GetActivationLayers().size());
 
 	return network;
-}
-
-std::unique_ptr<ALoss> NetworkBuilder::GetLossFuncObj() const {
-	switch (config_.GetLossFunc()) {
-		case ALoss::LossFuncType::kCatCrossentropy:
-			return std::make_unique<LossCategoricalCrossEntropy>();
-		default:
-			assert(false);
-			throw std::runtime_error("Loss function not valid");
-	}
-}
-
-std::unique_ptr<AActivation> NetworkBuilder::GetActivationFuncObj(
-	int64_t index) const {
-	assert(index >= 0);
-	assert(config_.GetActivationFunc().size() <
-			   std::numeric_limits<int64_t>::max() &&
-		   index < static_cast<int64_t>(config_.GetActivationFunc().size()));
-
-	switch (config_.GetActivationFunc().at(index)) {
-		case AActivation::ActivationFuncType::kRelu:
-			return std::make_unique<ActivationReLU>();
-		case AActivation::ActivationFuncType::kSoftmax:
-			return std::make_unique<ActivationSoftmax>();
-		default:
-			assert(false);
-			throw std::runtime_error("Activation function not valid");
-	}
 }

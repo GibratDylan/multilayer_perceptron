@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <string_view>
 #include <vector>
 
 class Network {
@@ -31,6 +32,13 @@ class Network {
 	const std::vector<std::unique_ptr<AActivation>>& GetActivationLayers()
 		const noexcept;
 	const ALoss& GetLossFunc() const noexcept;
+
+	void Serialize(std::string_view filename) const;
+	static Network Deserialize(std::string_view filename);
+
+	static std::unique_ptr<ALoss> GetLossFuncObj(ALoss::LossFuncType loss_type);
+	static std::unique_ptr<AActivation> GetActivationFuncObj(
+		AActivation::ActivationFuncType activation_type);
 
    private:
 	void AddNeuronalLayer(NeuronalLayer&& neuronal_layer);

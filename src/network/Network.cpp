@@ -1,15 +1,23 @@
 #include "network/Network.hpp"
 
 #include "activation/AActivation.hpp"
+#include "activation/ActivationReLU.hpp"
+#include "activation/ActivationSoftmax.hpp"
 #include "layer/NeuronalLayer.hpp"
 #include "loss/ALoss.hpp"
+#include "loss/LossCategoricalCrossEntropy.hpp"
 #include "types/eigen_types.hpp"
 
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
+#include <fstream>
+#include <ios>
+#include <iostream>
 #include <limits>
 #include <memory>
+#include <stdexcept>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -102,4 +110,78 @@ const std::vector<std::unique_ptr<AActivation>>& Network::GetActivationLayers()
 
 const ALoss& Network::GetLossFunc() const noexcept {
 	return *loss_func_;
+}
+
+void Network::Serialize(std::string_view filename) const {
+	std::ofstream file{std::string{filename}, std::ios::binary};
+	if (!file.is_open())
+		throw std::runtime_error("Error: Failed to open and serialize network");
+
+	// NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
+	ALoss::LossFuncType loss_type{this->loss_func_->GetLossType()};
+	file.write(reinterpret_cast<const char*>(&loss_type),
+			   sizeof(ALoss::LossFuncType));
+
+	uint64_t size_activation_type{this->activation_func_.size()};
+	file.write(reinterpret_cast<const char*>(&size_activation_type),
+			   sizeof(uint64_t));
+
+	for (const auto& activation_func : activation_func_) {
+		AActivation::ActivationFuncType activation_type{
+			activation_func->GetActivationType()};
+		file.write(reinterpret_cast<const char*>(&activation_type),
+				   sizeof(AActivation::ActivationFuncType));
+	}
+	// NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
+}
+
+Network Network::Deserialize(std::string_view filename) {
+	std::ifstream file{std::string{filename}, std::ios::binary};
+	if (!file.is_open())
+		throw std::runtime_error(
+			"Error: Failed to open and deserialize network");
+
+	// NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
+	ALoss::LossFuncType loss_type{};
+	file.read(reinterpret_cast<char*>(&loss_type), sizeof(ALoss::LossFuncType));
+	Network network{GetLossFuncObj(loss_type)};
+
+	uint64_t size_activation_type{};
+	file.read(reinterpret_cast<char*>(&size_activation_type), sizeof(uint64_t));
+	std::cout << size_activation_type << '\n';
+
+	std::vector<AActivation::ActivationFuncType> activation_types{};
+	activation_types.reserve(size_activation_type);
+	for (uint64_t i{}; i < size_activation_type; ++i) {
+		AActivation::ActivationFuncType activation_type{};
+		file.read(reinterpret_cast<char*>(&activation_type),
+				  sizeof(AActivation::ActivationFuncType));
+		activation_types.push_back(activation_type);
+	}
+	// NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
+
+	return network;
+}
+
+std::unique_ptr<ALoss> Network::GetLossFuncObj(ALoss::LossFuncType loss_type) {
+	switch (loss_type) {
+		case ALoss::LossFuncType::kCatCrossentropy:
+			return std::make_unique<LossCategoricalCrossEntropy>();
+		default:
+			assert(false);
+			throw std::runtime_error("Loss function not valid");
+	}
+}
+
+std::unique_ptr<AActivation> Network::GetActivationFuncObj(
+	AActivation::ActivationFuncType activation_type) {
+	switch (activation_type) {
+		case AActivation::ActivationFuncType::kRelu:
+			return std::make_unique<ActivationReLU>();
+		case AActivation::ActivationFuncType::kSoftmax:
+			return std::make_unique<ActivationSoftmax>();
+		default:
+			assert(false);
+			throw std::runtime_error("Activation function not valid");
+	}
 }

@@ -2,6 +2,8 @@
 
 #include "ITrainerObserver.hpp"
 #include "data/csv.hpp"
+#include "error/Result.hpp"
+#include "error/error.hpp"
 
 #include <cstdint>
 

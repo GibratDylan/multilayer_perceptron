@@ -8,4 +8,5 @@ class LossCategoricalCrossEntropy : public ALoss {
 	void Forward(const MatrixIn& logits_batch,
 				 IntVectorIn targets_batch) override;
 	void Backward(IntVectorIn targets_batch) override;
+	LossFuncType GetLossType() const noexcept override;
 };

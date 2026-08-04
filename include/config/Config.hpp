@@ -1,6 +1,8 @@
 #pragma once
 
 #include "activation/AActivation.hpp"
+#include "error/Result.hpp"
+#include "error/error.hpp"
 #include "loss/ALoss.hpp"
 
 #include <cstdint>
@@ -8,18 +10,21 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 class Config {
    public:
 	using Tokens = std::vector<std::string>;
-	using Handler = bool (Config::*)(const Tokens&, int64_t);
+	using Handler =
+		Result<std::monostate, ConfigError> (Config::*)(const Tokens&, int64_t);
 	using Handlers = std::unordered_map<std::string_view, Handler>;
-	using ParseSingle = bool (Config::*)(std::string_view, int64_t);
+	using ParseSingle = Result<std::monostate, ConfigError> (Config::*)(
+		std::string_view, int64_t);
+	using ParseResult = Result<std::monostate, ConfigError>;
 
    private:
 	int64_t size_{};
-	int64_t input_size_{};
 	std::vector<int64_t> neuronal_layers_{};
 	std::vector<AActivation::ActivationFuncType> activation_func_{};
 	int64_t epochs_{};
@@ -32,44 +37,43 @@ class Config {
 	bool seen_epochs_{};
 	bool seen_learning_rate_{};
 	bool seen_batch_size_{};
-	bool seen_input_size_{};
 	bool seen_loss_func_{};
 
    public:
 	explicit Config(std::string_view path);
 
-	bool Parse();
+	ParseResult Parse();
 
 	const std::vector<int64_t>& GetNeuralLayer() const noexcept;
 	const std::vector<AActivation::ActivationFuncType>& GetActivationFunc()
 		const noexcept;
 	int64_t GetSize() const noexcept;
-	int64_t GetInputSize() const noexcept;
 	int64_t GetEpochs() const noexcept;
 	int64_t GetBatchSize() const noexcept;
 	float GetLearningRate() const noexcept;
 	ALoss::LossFuncType GetLossFunc() const noexcept;
 
-	bool IsConfigValid() const noexcept;
+	ParseResult IsConfigValid() const;
 
    private:
 	void Reset();
-	bool ParseLines(std::ifstream& file);
+	ParseResult ParseLines(std::ifstream& file);
 
-	bool ParseSingleValue(bool* seen, const Tokens& tokens, int64_t line_number,
-						  ParseSingle parse_and_set);
+	ParseResult ParseSingleValue(bool* seen, const Tokens& tokens,
+								 int64_t line_number,
+								 ParseSingle parse_and_set);
 
-	bool HandleEpochs(const Tokens& tokens, int64_t line_number);
-	bool HandleLearningRate(const Tokens& tokens, int64_t line_number);
-	bool HandleBatchSize(const Tokens& tokens, int64_t line_number);
-	bool HandleInputSize(const Tokens& tokens, int64_t line_number);
-	bool HandleLossFunc(const Tokens& tokens, int64_t line_number);
-	bool ParseEpochs(std::string_view token, int64_t line_number);
-	bool ParseLearningRate(std::string_view token, int64_t line_number);
-	bool ParseInputSize(std::string_view token, int64_t line_number);
-	bool ParseLossFunc(std::string_view token, int64_t line_number);
-	bool ParseBatchSize(std::string_view token, int64_t line_number);
-	bool ParseLayer(const Tokens& tokens, int64_t line_number);
+	ParseResult HandleEpochs(const Tokens& tokens, int64_t line_number);
+	ParseResult HandleLearningRate(const Tokens& tokens, int64_t line_number);
+	ParseResult HandleBatchSize(const Tokens& tokens, int64_t line_number);
+	ParseResult HandleLossFunc(const Tokens& tokens, int64_t line_number);
+	ParseResult ParseEpochs(std::string_view token, int64_t line_number);
+	ParseResult ParseLearningRate(std::string_view token, int64_t line_number);
+	ParseResult ParseLossFunc(std::string_view token, int64_t line_number);
+	ParseResult ParseBatchSize(std::string_view token, int64_t line_number);
+	ParseResult ParseLayer(const Tokens& tokens, int64_t line_number);
 
 	Handlers BuildHandlers();
 };
+
+std::string ConfigErrorMessage(const ConfigError& error);

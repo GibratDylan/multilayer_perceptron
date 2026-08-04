@@ -192,13 +192,10 @@ fi
 
 echo "[clang-tidy] Running on ${#FILES[@]} file(s)" >&2
 
-EXIT_CODE=0
 for file in "${FILES[@]}"; do
   if [[ ! -f "$file" ]]; then
     echo "[clang-tidy] Skip missing: $file" >&2
     continue
   fi
-    clang-tidy --quiet "$file" "${TIDY_ARGS[@]}" 2>&1 | filter_eigen_errors || EXIT_CODE=$?
+    clang-tidy --quiet "$file" "${TIDY_ARGS[@]}" 2>&1 | filter_eigen_errors
 done
-
-exit "$EXIT_CODE"

@@ -1,5 +1,6 @@
 #include "activation/ActivationReLU.hpp"
 
+#include "activation/AActivation.hpp"
 #include "types/eigen_types.hpp"
 
 #include <cassert>
@@ -24,4 +25,9 @@ void ActivationReLU::Backward(const MatrixIn& gradient_batch) {
 
 	assert(InputsGradient().rows() == gradient_batch.rows() &&
 		   InputsGradient().cols() == gradient_batch.cols());
+}
+
+AActivation::ActivationFuncType ActivationReLU::GetActivationType()
+	const noexcept {
+	return ActivationFuncType::kRelu;
 }

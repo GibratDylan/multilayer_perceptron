@@ -3,8 +3,10 @@
 #include "data/Dataset.hpp"
 #include "data/csv.hpp"
 
+#include <cstddef>
 #include <stdexcept>
 #include <string_view>
+#include <utility>
 
 SplitMode::SplitMode(std::string_view split_data_path, float split_ratio)
 	: split_data_path_{split_data_path}, split_ratio_{split_ratio} {}
@@ -25,15 +27,15 @@ void SplitMode::Run() const {
 	size_t pos{path.find_first_of('/') + 1};
 	if (pos == std::string::npos) pos = 0;
 
-	auto training_result{
-		csv::CsvDumper(path.substr().insert(pos, "training_"), "", pair.first)};
+	auto training_result{csv::CsvDumper(
+		path.substr().insert(pos, "predictive_"), "", pair.first)};
 	if (!training_result) {
 		throw std::runtime_error(
 			std::string{csv::CsvErrorMessage(training_result.error())});
 	}
 
 	auto predictive_result{
-		csv::CsvDumper(path.insert(pos, "predictive_"), "", pair.second)};
+		csv::CsvDumper(path.insert(pos, "training_"), "", pair.second)};
 	if (!predictive_result) {
 		throw std::runtime_error(
 			std::string{csv::CsvErrorMessage(predictive_result.error())});

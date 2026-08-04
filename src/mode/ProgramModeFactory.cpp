@@ -38,11 +38,11 @@ ProgramModeFactory::Create(const std::vector<std::string_view>& args) const {
 				std::make_unique<PredictiveMode>(args.at(2), args.at(3))};
 		}
 		case ProgramModeType::kTraining: {
-			if (args.size() != 3)
+			if (args.size() != 4)
 				return Result<std::unique_ptr<IProgramMode>, ProgramModeError>{
 					ProgramModeError::kNumberOfArgumentsNotValid};
 			return Result<std::unique_ptr<IProgramMode>, ProgramModeError>{
-				std::make_unique<TrainingMode>(args.at(2))};
+				std::make_unique<TrainingMode>(args.at(2), args.at(3))};
 		}
 		case ProgramModeType::kSplit: {
 			if (args.size() != 4)
